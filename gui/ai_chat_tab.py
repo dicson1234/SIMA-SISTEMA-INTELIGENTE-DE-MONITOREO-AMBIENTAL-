@@ -467,20 +467,26 @@ class AIChatTabWidget(QWidget):
     def _generate_response(self, query):
         t, h, nn1, nn2 = self._get_live_data()
         self.avatar_container.set_state(AIFaceWidget.STATE_THINKING, "💚 Consultando con Gemini...")
+        self.btn_send.setEnabled(False)
+        self.input_field.setEnabled(False)
 
         self.worker_thread = AIWorkerThread(self.ai_agent, query, nn1, nn2, t, h, parent=self)
         self.worker_thread.response_ready.connect(self._on_response)
         self.worker_thread.start()
 
-
     @Slot(dict)
     def _on_response(self, res):
+        self.btn_send.setEnabled(True)
+        self.input_field.setEnabled(True)
+        self.input_field.setFocus()
+
         text = res.get("response", "")
         expr = res.get("expression_state", AIFaceWidget.STATE_HAPPY)
 
         self.avatar_container.set_state(AIFaceWidget.STATE_TALKING)
         self._add_ai_bubble(text)
         QTimer.singleShot(1200, lambda: self.avatar_container.set_state(expr))
+
 
 
 

@@ -97,30 +97,36 @@ class AIAgentEngine:
         model_path = self.gemini_model_name if self.gemini_model_name.startswith("models/") else f"models/{self.gemini_model_name}"
         url = f"https://generativelanguage.googleapis.com/v1beta/{model_path}:generateContent?key={self.api_key}"
 
-        # Construir estructura de diálogo multi-turno para mantener memoria sin repetir saludos
+        # Construir estructura de diálogo multi-turno garantizando alternancia de roles (user/model)
         contents = []
-        
-        # Agregar los últimos 6 mensajes del historial para contexto
-        recent_history = self.conversation_history[-6:]
-        for msg in recent_history:
-            role = "user" if msg["role"] == "user" else "model"
-            contents.append({
-                "role": role,
-                "parts": [{"text": msg["content"]}]
-            })
+        last_role = None
 
-        # Agregar el prompt actual
-        contents.append({
-            "role": "user",
-            "parts": [{"text": prompt_text}]
-        })
+        # Filtrar historial reciente respetando la alternancia
+        for msg in self.conversation_history[-6:]:
+            role = "user" if msg.get("role") == "user" else "model"
+            content_text = msg.get("content", "").strip()
+            if content_text and role != last_role:
+                contents.append({
+                    "role": role,
+                    "parts": [{"text": content_text}]
+                })
+                last_role = role
+
+        # Si el último rol introducido fue 'user', anexamos el prompt al mismo turno o lo ajustamos
+        if last_role == "user" and contents:
+            contents[-1]["parts"][0]["text"] += f"\n\n[Consulta Adicional]: {prompt_text}"
+        else:
+            contents.append({
+                "role": "user",
+                "parts": [{"text": prompt_text}]
+            })
 
         payload = {"contents": contents}
 
         try:
             data_bytes = json.dumps(payload).encode("utf-8")
             req = urllib.request.Request(url, data=data_bytes, headers={"Content-Type": "application/json"}, method="POST")
-            with urllib.request.urlopen(req, timeout=12) as response:
+            with urllib.request.urlopen(req, timeout=5) as response:
                 if response.status == 200:
                     resp_json = json.loads(response.read().decode("utf-8"))
                     candidates = resp_json.get("candidates", [])
@@ -129,9 +135,10 @@ class AIAgentEngine:
                         if parts:
                             return parts[0].get("text", "").strip()
         except Exception as e:
-            logger.warning("Google Gemini REST API aviso/timeout: %s", e)
+            logger.warning("Google Gemini REST API aviso/timeout (5s): %s", e)
 
         return None
+
 
     def _execute_arm_action(self, action_key: str, user_name: str, current_temp: float, current_hum: float) -> Dict[str, Any]:
         """Ejecuta comandos de control de software y hardware (Brazos de la IA)."""
