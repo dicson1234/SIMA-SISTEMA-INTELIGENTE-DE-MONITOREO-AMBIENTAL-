@@ -1,5 +1,82 @@
-node_modules/
-.next/
-dist/
+```
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.ENV
+.ENV.*
+.ipython/
+.ipynb_checkpoints/
+
+# Build artifacts
 build/
+dist/
+*.egg-info/
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
 *.log
+logs/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+*.coveragerc
+
+# Environment files
+.env
+.env.local
+.env.*
+!.env.example
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+.hypothesis/
+
+# Models and data files
+*.pth
+*.model
+*.data
+*.csv
+*.json.bak
+
+# Compressed files
+*.zip
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.gz
+*.rar
+*.7z
+
+# Documentation builds
+_site/
+_sass-cache/
+.jekyll-metadata
+```.next/

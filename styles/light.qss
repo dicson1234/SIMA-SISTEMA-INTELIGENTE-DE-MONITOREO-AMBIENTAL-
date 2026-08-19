@@ -1,0 +1,263 @@
+/*
+ * SIMA — Sistema Inteligente de Monitoreo Ambiental
+ * Hoja de Estilos de Interfaz — Modo Claro (light.qss)
+ *
+ * Diseñado con una paleta moderna, limpia y de alta legibilidad para entornos iluminados.
+ * Colores clave:
+ *   - Fondo Principal: #f8fafc
+ *   - Fondo de Tarjetas: #ffffff
+ *   - Acento Principal: #3b82f6
+ *   - Éxito (Success): #10b981
+ *   - Alerta (Danger): #ef4444
+ */
+
+/* =====================================================================
+   ESTILOS GENERALES Y CONTENEDORES
+   ===================================================================== */
+
+QMainWindow {
+    background-color: #f8fafc;
+}
+
+QWidget {
+    color: #0f172a;
+    font-family: "Segoe UI", "Roboto", "Inter", "Helvetica Neue", sans-serif;
+    font-size: 13px;
+}
+
+/* Tarjetas y Contenedores */
+QFrame#cardFrame, QFrame.card {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+}
+
+QFrame#cardFrame:hover, QFrame.card:hover {
+    border: 1px solid #3b82f6;
+}
+
+/* Contenedores de Gráficos y Tablas */
+QFrame#plotContainer, QFrame#tableContainer {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+/* Barra de Estado */
+QStatusBar {
+    background-color: #ffffff;
+    border-top: 1px solid #cbd5e1;
+    color: #475569;
+}
+
+QStatusBar::item {
+    border: none;
+}
+
+/* ToolTips */
+QToolTip {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    border: 1px solid #3b82f6;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+/* =====================================================================
+   BOTONES
+   ===================================================================== */
+
+QPushButton {
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    color: #0f172a;
+    padding: 8px 16px;
+    font-weight: 600;
+}
+
+QPushButton:hover {
+    background-color: #e2e8f0;
+    border-color: #94a3b8;
+}
+
+QPushButton:pressed {
+    background-color: #cbd5e1;
+    border-color: #64748b;
+}
+
+QPushButton:disabled {
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
+    color: #94a3b8;
+}
+
+/* Botones de Acción Destacada (Iniciar Monitoreo) */
+QPushButton#primaryButton {
+    background-color: #10b981;
+    border-color: #10b981;
+    color: #ffffff;
+}
+
+QPushButton#primaryButton:hover {
+    background-color: #059669;
+    border-color: #059669;
+}
+
+QPushButton#primaryButton:pressed {
+    background-color: #047857;
+    border-color: #047857;
+}
+
+/* Botones de Alerta/Parada (Detener Monitoreo) */
+QPushButton#dangerButton {
+    background-color: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+}
+
+QPushButton#dangerButton:hover {
+    background-color: #dc2626;
+    border-color: #dc2626;
+}
+
+QPushButton#dangerButton:pressed {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+}
+
+/* =====================================================================
+   CONTROLES DE FORMULARIO (CONFIGURACIÓN)
+   ===================================================================== */
+
+QLineEdit, QComboBox, QSpinBox {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: #0f172a;
+}
+
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus {
+    border: 1px solid #3b82f6;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 25px;
+    border-left: 1px solid #cbd5e1;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    selection-background-color: #3b82f6;
+    selection-color: #ffffff;
+    color: #0f172a;
+    padding: 4px;
+}
+
+QLabel#titleLabel {
+    font-size: 18px;
+    font-weight: bold;
+    color: #0f172a;
+}
+
+QLabel#subtitleLabel {
+    font-size: 12px;
+    color: #475569;
+}
+
+/* =====================================================================
+   TABLA DE MEDICIONES (QTableWidget)
+   ===================================================================== */
+
+QTableWidget {
+    background-color: #ffffff;
+    border: none;
+    gridline-color: #e2e8f0;
+    border-radius: 6px;
+}
+
+QTableWidget::item {
+    padding: 6px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+QTableWidget::item:selected {
+    background-color: #dbeafe;
+    color: #1e3a8a;
+}
+
+QHeaderView::section {
+    background-color: #f1f5f9;
+    color: #475569;
+    padding: 8px;
+    font-weight: bold;
+    border: none;
+    border-bottom: 2px solid #cbd5e1;
+}
+
+/* =====================================================================
+   BARRA DE DESPLAZAMIENTO (Scrollbar)
+   ===================================================================== */
+
+QScrollBar:vertical {
+    background-color: #f8fafc;
+    width: 10px;
+    margin: 0px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #cbd5e1;
+    min-height: 20px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #94a3b8;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    border: none;
+    background: none;
+}
+
+/* =====================================================================
+   PESTAÑAS DE NAVEGACIÓN (QTabWidget & QTabBar)
+   ===================================================================== */
+QTabWidget::pane {
+    border: 1px solid #cbd5e1;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    top: -1px;
+}
+
+QTabBar::tab {
+    background-color: #e2e8f0;
+    border: 1px solid #cbd5e1;
+    border-bottom: none;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    color: #475569;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 13px;
+    margin-right: 4px;
+}
+
+QTabBar::tab:selected {
+    background-color: #ffffff;
+    color: #2563eb;
+    border-top: 3px solid #2563eb;
+    border-bottom: none;
+}
+
+QTabBar::tab:hover:!selected {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
