@@ -581,7 +581,7 @@ function sendPrompt(prompt) {
       addMessage('La solicitud a Google Gemini superó el tiempo de espera. Por favor reintenta en un momento.', false);
       setExpression('NORMAL');
     }
-  }, 20000);
+  }, 45000);
 
   function dispatchToBridge(attempts) {
     attempts = attempts || 0;
