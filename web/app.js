@@ -584,11 +584,6 @@ function sendPrompt(prompt) {
 
   // Transmisión nativa e instantánea vía consola de QtWebEngine
   console.log('SIMA_PROMPT:' + text);
-
-  // Vía secundaria por QWebChannel si está inicializado
-  if (bridge && typeof bridge.send_message === 'function') {
-    try { bridge.send_message(text); } catch (e) {}
-  }
 }
 
 function wireActions() {

@@ -182,11 +182,10 @@ class SIMAWebBridge(QObject):
 
         ai_agent = self.window.ai_chat_tab.ai_agent
 
-        # Cancelar cualquier worker anterior para evitar conflictos de hilos concurrentes
+        # Desconectar el worker anterior si aún sigue corriendo para no congelar la GUI principal
         if self._worker and self._worker.isRunning():
             try:
-                self._worker.terminate()
-                self._worker.wait()
+                self._worker.response_ready.disconnect()
             except Exception:
                 pass
 
