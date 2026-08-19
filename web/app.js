@@ -572,7 +572,6 @@ function sendPrompt(prompt) {
   if ($('chatInput')) $('chatInput').disabled = true;
   setExpression('THINKING');
 
-  // Timeout de seguridad amplio (20s) solo por si cae la conexión a internet
   aiSafetyTimeout = setTimeout(() => {
     if (waitingForAI) {
       waitingForAI = false;
@@ -583,32 +582,18 @@ function sendPrompt(prompt) {
     }
   }, 45000);
 
-  function dispatchToBridge(attempts) {
-    attempts = attempts || 0;
-    tryConnectQWebChannel();
+  // Transmisión nativa e instantánea vía consola de QtWebEngine
+  console.log('SIMA_PROMPT:' + text);
 
-    if (bridge && typeof bridge.send_message === 'function') {
-      bridge.send_message(text);
-    } else if (attempts < 30) {
-      setTimeout(() => dispatchToBridge(attempts + 1), 100);
-    } else {
-      if (aiSafetyTimeout) { clearTimeout(aiSafetyTimeout); aiSafetyTimeout = null; }
-      waitingForAI = false;
-      if ($('sendBtn')) $('sendBtn').disabled = false;
-      if ($('chatInput')) $('chatInput').disabled = false;
-      addMessage('Conectando con el motor conversacional SIMA... Por favor intenta enviar tu mensaje nuevamente.', false);
-      setExpression('NORMAL');
-    }
+  // Vía secundaria por QWebChannel si está inicializado
+  if (bridge && typeof bridge.send_message === 'function') {
+    try { bridge.send_message(text); } catch (e) {}
   }
-
-  dispatchToBridge(0);
 }
 
 function wireActions() {
   document.querySelectorAll('[data-action]').forEach(btn => {
     btn.addEventListener('click', () => {
-      tryConnectQWebChannel();
-      if (!bridge) return;
       const map = {
         connect: 'connect_serial',
         demo: 'toggle_demo',
@@ -621,8 +606,14 @@ function wireActions() {
         settings: 'open_settings',
         profile: 'open_profile'
       };
-      const method = map[btn.dataset.action];
-      if (method && typeof bridge[method] === 'function') bridge[method]();
+      const actionName = map[btn.dataset.action];
+      if (actionName) {
+        console.log('SIMA_ACTION:' + actionName);
+      }
+      tryConnectQWebChannel();
+      if (bridge && actionName && typeof bridge[actionName] === 'function') {
+        try { bridge[actionName](); } catch (e) {}
+      }
     });
   });
 
@@ -658,8 +649,9 @@ function wireActions() {
 
   if ($('resetChat')) {
     $('resetChat').addEventListener('click', () => {
+      console.log('SIMA_ACTION:reset_chat');
       tryConnectQWebChannel();
-      if (bridge) bridge.reset_chat();
+      if (bridge && bridge.reset_chat) bridge.reset_chat();
       resetChatUI();
     });
   }

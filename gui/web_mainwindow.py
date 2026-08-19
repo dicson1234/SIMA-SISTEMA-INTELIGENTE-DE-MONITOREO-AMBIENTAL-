@@ -13,6 +13,7 @@ from typing import Optional
 from PySide6.QtCore import QObject, QUrl, Signal, Slot
 from PySide6.QtWidgets import QLabel, QMainWindow, QPushButton, QStatusBar, QVBoxLayout, QWidget
 from PySide6.QtWebChannel import QWebChannel
+from PySide6.QtWebEngineCore import QWebEnginePage
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 from auth_manager import get_auth_manager
@@ -20,6 +21,47 @@ from gui.ai_chat_tab import AIWorkerThread, AIChatTabWidget
 from gui.dashboard import DashboardWidget
 from gui.mainwindow import MainWindow
 from gui.widgets import LEDIndicator
+
+
+class SIMAWebPage(QWebEnginePage):
+    """Página personalizada para interceptar mensajes y acciones enviadas por JS mediante consola."""
+
+    def __init__(self, bridge: "SIMAWebBridge", parent=None):
+        super().__init__(parent)
+        self.bridge = bridge
+
+    def javaScriptConsoleMessage(self, level, msg: str, line: int, source: str) -> None:
+        if msg and isinstance(msg, str):
+            if msg.startswith("SIMA_PROMPT:"):
+                prompt = msg[12:]
+                self.bridge.send_message(prompt)
+            elif msg.startswith("SIMA_ACTION:"):
+                action = msg[12:]
+                if action == "connect_serial":
+                    self.bridge.connect_serial()
+                elif action == "toggle_demo":
+                    self.bridge.toggle_demo()
+                elif action == "toggle_pause":
+                    self.bridge.toggle_pause()
+                elif action == "clear_data":
+                    self.bridge.clear_data()
+                elif action == "export_excel":
+                    self.bridge.export_excel()
+                elif action == "export_pdf":
+                    self.bridge.export_pdf()
+                elif action == "open_neural_network":
+                    self.bridge.open_neural_network()
+                elif action == "toggle_fullscreen":
+                    self.bridge.toggle_fullscreen()
+                elif action == "open_settings":
+                    self.bridge.open_settings()
+                elif action == "open_profile":
+                    self.bridge.open_profile()
+                elif action == "reset_chat":
+                    self.bridge.reset_chat()
+                elif action == "get_snapshot":
+                    self.bridge.window._emit_web_snapshot()
+        super().javaScriptConsoleMessage(level, msg, line, source)
 
 
 class SIMAWebBridge(QObject):
@@ -244,10 +286,12 @@ class WebMainWindow(MainWindow):
         host_layout.setSpacing(0)
 
         self.web_view = QWebEngineView(host)
+        self.web_bridge = SIMAWebBridge(self)
+        self.web_page = SIMAWebPage(self.web_bridge, self.web_view)
+        self.web_view.setPage(self.web_page)
         host_layout.addWidget(self.web_view)
         self.setCentralWidget(host)
 
-        self.web_bridge = SIMAWebBridge(self)
         self.web_channel = QWebChannel(self)
         self.web_channel.registerObject("bridge", self.web_bridge)
         self.web_view.page().setWebChannel(self.web_channel)
