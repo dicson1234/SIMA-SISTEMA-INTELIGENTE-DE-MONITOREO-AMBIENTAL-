@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
         """Construye la interfaz visual Botanical Dark Luxury."""
         self.setWindowTitle(f"{APP_NAME} — {APP_FULL_NAME}")
         self.resize(1340, 860)
-        self.setMinimumSize(1024, 700)
+        self.setMinimumSize(1240, 760)
 
         self.central_widget = QWidget(self)
         self.setCentralWidget(self.central_widget)
