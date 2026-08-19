@@ -134,15 +134,15 @@ class MainWindow(QMainWindow):
         """
         pill_beige = """
             QPushButton {
-                background: #d8d0be; color: #141714;
-                border: 1px solid #bfb7a5;
+                background: #242822; color: #c8c7be;
+                border: 1px solid #30372c;
                 border-radius: 16px; padding: 7px 16px;
                 font-weight: 600; font-size: 11px;
             }
             QPushButton:hover {
-                background: #e8e3d7; color: #141714; border-color: #6f7e5d;
+                background: #30372c; color: #f2f0e8; border-color: #6f7e5d;
             }
-            QPushButton:pressed { background: #bfb7a5; }
+            QPushButton:pressed { background: #1e221c; }
         """
 
         # Botones de control
