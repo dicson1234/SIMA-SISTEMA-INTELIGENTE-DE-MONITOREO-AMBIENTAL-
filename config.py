@@ -35,7 +35,7 @@ DEFAULT_LLM_MODEL: str = "qwen2.5:0.5b"
 _gemini_part_a: str = "AQ.Ab8RN6LJ-"
 _gemini_part_b: str = "BdAcYs8LfrQI2da3Ntu0PjgpAy_gykfpWGh3w85Lw"
 GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", _gemini_part_a + _gemini_part_b)
-GEMINI_MODEL_NAME: str = "gemini-1.5-flash"
+GEMINI_MODEL_NAME: str = "gemini-flash-lite-latest"
 CLOUDFLARE_API_KEY: str = os.getenv("CLOUDFLARE_API_KEY", "cfat" + "_LWbKjZkUJmsk8lmbzGcofwRG4VRb2Y5nVgAIaszC19f488b6")
 
 

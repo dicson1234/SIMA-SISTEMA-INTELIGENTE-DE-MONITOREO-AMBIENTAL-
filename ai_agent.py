@@ -106,8 +106,7 @@ class AIAgentEngine:
 
         # Lista de modelos válidos para la REST API de Google Gemini (ordenados por velocidad)
         model_candidates = [
-            "gemini-1.5-flash",
-            "gemini-1.5-flash-latest",
+            "gemini-flash-lite-latest",
             self.gemini_model_name.replace("models/", ""),
         ]
 
