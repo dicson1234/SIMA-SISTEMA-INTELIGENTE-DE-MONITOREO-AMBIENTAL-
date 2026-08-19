@@ -156,7 +156,15 @@ class SIMAWebBridge(QObject):
         worker.start()
 
     def _on_worker_response(self, res_dict: dict) -> None:
-        self.ai_response.emit(json.dumps(res_dict, ensure_ascii=False))
+        payload = json.dumps(res_dict, ensure_ascii=False)
+        self.ai_response.emit(payload)
+        # Inyección directa segura usando json.dumps para escapar la cadena JS de forma perfecta
+        js_arg = json.dumps(payload)
+        js_call = f"if(typeof handleAIResponsePayload==='function') handleAIResponsePayload({js_arg});"
+        try:
+            self.window.web_view.page().runJavaScript(js_call)
+        except Exception:
+            pass
 
     @Slot()
     def reset_chat(self) -> None:
@@ -250,7 +258,7 @@ class WebMainWindow(MainWindow):
 
     def _on_web_loaded(self, ok: bool) -> None:
         if ok:
-            self._emit_web_snapshot()
+            self._emit_web_snapshot_js()
 
     def _web_snapshot(self) -> dict:
         reading = self.sensor_manager.last_reading
@@ -283,9 +291,28 @@ class WebMainWindow(MainWindow):
         if hasattr(self, "web_bridge"):
             payload = json.dumps(self._web_snapshot(), ensure_ascii=False)
             self.web_bridge.state_changed.emit(payload)
+            # Inyección directa vía runJavaScript como mecanismo primario
+            self._inject_js_state(payload)
             self.status_bar_label_port.setText(
                 f"Puerto: {self.serial_thread.port} | Baudios: {self.serial_thread.baudrate}"
             )
+
+    def _emit_web_snapshot_js(self) -> None:
+        """Envía snapshot del estado al frontend directamente vía runJavaScript."""
+        try:
+            payload = json.dumps(self._web_snapshot(), ensure_ascii=False)
+            self._inject_js_state(payload)
+        except Exception:
+            pass
+
+    def _inject_js_state(self, payload: str) -> None:
+        """Inyecta datos de estado directamente en el frontend JS."""
+        try:
+            js_arg = json.dumps(payload)
+            js = f"if(typeof updateState==='function') updateState(JSON.parse({js_arg}));"
+            self.web_view.page().runJavaScript(js)
+        except Exception:
+            pass
 
     @Slot(float, float, float)
     def _handle_new_data(self, temp: float, hum: float, light: float = 400.0) -> None:

@@ -101,12 +101,12 @@ class AIAgentEngine:
         if not key or not isinstance(key, str) or len(key) < 10:
             return None
 
-        # Lista de modelos válidos para la REST API de Google Gemini (ordenados por velocidad)
-        model_candidates = [
-            "gemini-1.5-flash",
-            "gemini-1.5-flash-latest",
-            self.gemini_model_name.replace("models/", ""),
-        ]
+        # Lista de modelos válidos para la REST API de Google Gemini
+        raw_candidates = [self.gemini_model_name, "models/gemini-flash-lite-latest"]
+        model_candidates = []
+        for m in raw_candidates:
+            if m and m not in model_candidates:
+                model_candidates.append(m)
 
         contents = []
         last_role = ""
