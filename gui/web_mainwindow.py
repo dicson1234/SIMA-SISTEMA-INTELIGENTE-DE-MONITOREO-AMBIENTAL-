@@ -93,6 +93,12 @@ class SIMAWebBridge(QObject):
 
         ai_tab = self.window.ai_chat_tab
         temp, hum, nn1, nn2 = ai_tab._get_live_data()
+        
+        # Cancelar cualquier worker anterior para evitar conflictos
+        if self._worker and self._worker.isRunning():
+            self._worker.terminate()
+            self._worker.wait()
+        
         self._worker = AIWorkerThread(
             ai_tab.ai_agent,
             prompt,
