@@ -153,14 +153,30 @@ class DashboardWidget(QWidget):
         charts_header.setFont(QFont("Segoe UI", 10, QFont.Bold))
         charts_v.addWidget(charts_header)
 
+        self.chart_tabs = QTabWidget()
+        self.chart_tabs.setObjectName("dashboardInnerTabs")
+
+        # Tab: Temperatura
+        tab_temp = QWidget()
+        tv = QVBoxLayout(tab_temp)
+        tv.setContentsMargins(8, 8, 8, 8)
         self.chart_temp = RealTimeChartWidget(
             title="Temperatura", unit="°C", color="#a5b98a", parent=self
         )
+        tv.addWidget(self.chart_temp)
+        self.chart_tabs.addTab(tab_temp, "🌡️  Temperatura")
+
+        # Tab: Humedad
+        tab_hum = QWidget()
+        hv = QVBoxLayout(tab_hum)
+        hv.setContentsMargins(8, 8, 8, 8)
         self.chart_hum = RealTimeChartWidget(
-            title="Humedad", unit="%", color="#82936b", parent=self
+            title="Humedad Relativa", unit="%", color="#82936b", parent=self
         )
-        charts_v.addWidget(self.chart_temp, 1)
-        charts_v.addWidget(self.chart_hum, 1)
+        hv.addWidget(self.chart_hum)
+        self.chart_tabs.addTab(tab_hum, "💧  Humedad")
+
+        charts_v.addWidget(self.chart_tabs, 1)
 
         splitter.addWidget(charts_panel)
 

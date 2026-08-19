@@ -16,6 +16,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QColor, QBrush
 import pyqtgraph as pg
+pg.setConfigOptions(antialias=True)
 
 from config import MAX_SAMPLES
 
@@ -104,6 +105,10 @@ class RealTimeChartWidget(QFrame):
 
         self.plot_widget.showGrid(x=True, y=True, alpha=0.04)
         self.plot_widget.getViewBox().setMouseMode(pg.ViewBox.RectMode)
+
+        # Rango inicial elegante cuando aún no hay datos
+        self.plot_widget.setXRange(0, 60, padding=0)
+        self.plot_widget.setYRange(0, 100, padding=0)
 
         c = QColor(self.color)
 

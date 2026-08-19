@@ -88,9 +88,9 @@ QTabWidget::pane {
     top: -1px;
 }
 QTabBar::tab {
-    background: #242822;
-    color: #bfb7a5;
-    border: 1px solid #30372c;
+    background: #d8d0be;
+    color: #141714;
+    border: 1px solid #bfb7a5;
     border-bottom: none;
     border-top-left-radius: 13px;
     border-top-right-radius: 13px;
@@ -101,14 +101,15 @@ QTabBar::tab {
     font-weight: 600;
 }
 QTabBar::tab:selected {
-    background: #6f7e5d;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #2a3327, stop:1 #1e221c);
     color: #f2f0e8;
-    border-color: #82936b;
+    border: 1px solid #6f7e5d;
     font-weight: 700;
 }
 QTabBar::tab:hover:!selected {
-    background: #30372c;
-    color: #e8e3d7;
+    background: #e8e3d7;
+    color: #141714;
 }
 QTabWidget#dashboardInnerTabs::pane {
     border: none;
@@ -323,3 +324,7 @@ QFrame#dashboardGaugesCard,
 QFrame#chartsPanel,
 QFrame#historyPanel,
 QFrame#airBanner { qproperty-frameShape: StyledPanel; }
+
+/* Chat v8: scroll transparente y sin bordes fantasma en labels */
+QScrollArea#chatScroll { background: transparent; border: none; }
+QLabel { border: none; }

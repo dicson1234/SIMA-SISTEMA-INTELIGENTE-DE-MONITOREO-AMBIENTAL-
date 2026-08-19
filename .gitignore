@@ -1,83 +1,83 @@
 ```
-# Python
+# Database files
+*.db
+
+# Excel files
+excel/*.xlsx
+
+# Reports
+reports/*.pdf
+
+# Models
+models/*.pth
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+*.env.*
+
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
-env/
-venv/
-.venv/
-.ENV
-.ENV.*
-.ipython/
-.ipynb_checkpoints/
-
-# Build artifacts
-build/
-dist/
-*.egg-info/
-*.so
-*.dylib
-*.dll
-*.exe
-*.out
 
 # Dependencies
+venv/
+.venv/
+.env/
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Logs
-*.log
-logs/
+# Build artifacts
+dist/
+build/
+target/
 
-# IDE and editor files
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
-.DS_Store
-Thumbs.db
 
 # Coverage reports
 coverage/
 htmlcov/
 .coverage
-*.coveragerc
 
-# Environment files
-.env
-.env.local
-.env.*
-!.env.example
-
-# Testing
-.pytest_cache/
+# MyPy cache
 .mypy_cache/
-.hypothesis/
 
-# Models and data files
-*.pth
-*.model
-*.data
-*.csv
-*.json.bak
+# Pytest cache
+.pytest_cache/
 
 # Compressed files
 *.zip
-*.tar.gz
-*.tar.bz2
-*.tar.xz
 *.gz
-*.rar
+*.tar
+*.tgz
+*.bz2
+*.xz
 *.7z
-
-# Documentation builds
-_site/
-_sass-cache/
-.jekyll-metadata
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
 ```.next/
-.next/
