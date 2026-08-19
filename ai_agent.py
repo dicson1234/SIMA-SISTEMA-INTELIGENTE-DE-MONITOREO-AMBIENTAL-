@@ -103,9 +103,9 @@ class AIAgentEngine:
 
         # Lista de modelos válidos para la REST API de Google Gemini (ordenados por velocidad)
         model_candidates = [
-            "models/gemini-flash-lite-latest",
-            self.gemini_model_name,
-            "models/gemini-flash-latest",
+            "gemini-1.5-flash",
+            "gemini-1.5-flash-latest",
+            self.gemini_model_name.replace("models/", ""),
         ]
 
         contents = []
@@ -138,7 +138,7 @@ class AIAgentEngine:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{clean_m}:generateContent?key={key}"
             try:
                 req = urllib.request.Request(url, data=data_bytes, headers={"Content-Type": "application/json"}, method="POST")
-                with urllib.request.urlopen(req, timeout=10.0) as response:
+                with urllib.request.urlopen(req, timeout=30.0) as response:
                     if response.status == 200:
                         resp_json = json.loads(response.read().decode("utf-8"))
                         candidates = resp_json.get("candidates", [])
@@ -149,6 +149,9 @@ class AIAgentEngine:
                                 if text_out:
                                     logger.info("Respuesta obtenida exitosamente desde Google Gemini API (%s)", clean_m)
                                     return text_out
+            except urllib.error.HTTPError as e:
+                error_body = e.read().decode("utf-8") if hasattr(e, 'read') else str(e)
+                logger.error("Gemini REST HTTP Error %s: %s - Response: %s", e.code, clean_m, error_body)
             except Exception as e:
                 logger.warning("Gemini REST model %s intento fallido: %s", clean_m, e)
 
