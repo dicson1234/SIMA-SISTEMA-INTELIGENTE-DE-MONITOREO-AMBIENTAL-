@@ -78,134 +78,156 @@ class MainWindow(QMainWindow):
         logger.info("Ventana principal cargada en modo Standby esperando selección")
 
     def _init_ui(self) -> None:
-        """Construye la interfaz visual pastel."""
+        """Construye la interfaz visual Botanical Dark Luxury."""
         self.setWindowTitle(f"{APP_NAME} — {APP_FULL_NAME}")
-        self.resize(1280, 820)
+        self.resize(1340, 860)
         self.setMinimumSize(1024, 700)
 
-        # Widget central contenedor
         self.central_widget = QWidget(self)
         self.setCentralWidget(self.central_widget)
 
         main_layout = QVBoxLayout(self.central_widget)
-        main_layout.setContentsMargins(15, 12, 15, 10)
-        main_layout.setSpacing(10)
+        main_layout.setContentsMargins(10, 8, 10, 6)
+        main_layout.setSpacing(8)
 
-        # --- BARRA DE CONTROL SUPERIOR (Botanical Dark Pill Buttons) ---
-        control_frame = QFrame()
-        control_frame.setStyleSheet("""
+        # ═══════════════════════════════════════════════════
+        #  BARRA DE CONTROL SUPERIOR — Botanical Dark Toolbar
+        # ═══════════════════════════════════════════════════
+        toolbar = QFrame()
+        toolbar.setStyleSheet("""
             QFrame {
-                background-color: #0b100d;
-                border-radius: 0px;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 rgba(14,22,16,250), stop:1 rgba(10,15,12,250));
+                border: 1px solid #1e3025;
+                border-radius: 10px;
             }
         """)
-        control_layout = QHBoxLayout(control_frame)
-        control_layout.setContentsMargins(6, 6, 6, 6)
-        control_layout.setSpacing(6)
+        tb_layout = QHBoxLayout(toolbar)
+        tb_layout.setContentsMargins(10, 7, 10, 7)
+        tb_layout.setSpacing(5)
 
-        # Estilo base para botones pill verdes
-        pill_green = """
+        # Logo SIMA
+        logo = QLabel("🌿")
+        logo.setFont(QFont("Segoe UI Emoji", 16))
+        logo.setFixedSize(34, 34)
+        logo.setAlignment(Qt.AlignCenter)
+        logo.setStyleSheet("""
+            background: #111a14;
+            border: 1px solid #2d6b44;
+            border-radius: 8px;
+        """)
+        tb_layout.addWidget(logo)
+        tb_layout.addSpacing(6)
+
+        # Estilos de botones pill
+        pill_primary = """
             QPushButton {
-                background-color: #1a3524; color: #4ade80; border: 1px solid #2d5a3a;
-                border-radius: 6px; padding: 5px 12px; font-weight: 600; font-size: 11px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #1a3524, stop:1 #142a1c);
+                color: #4ade80; border: 1px solid #2d5a3a;
+                border-radius: 7px; padding: 6px 13px;
+                font-weight: 600; font-size: 11px;
             }
-            QPushButton:hover { background-color: #2d5a3a; color: #a7f3d0; }
+            QPushButton:hover {
+                background: #2d5a3a; color: #a7f3d0; border-color: #4ade80;
+            }
+            QPushButton:pressed { background: #2d6b44; }
         """
-        pill_accent = """
+        pill_secondary = """
             QPushButton {
-                background-color: #162019; color: #d1fae5; border: 1px solid #1e3025;
-                border-radius: 6px; padding: 5px 12px; font-weight: 600; font-size: 11px;
+                background: #111a14; color: #a7f3d0;
+                border: 1px solid #243b2a;
+                border-radius: 7px; padding: 6px 13px;
+                font-weight: 600; font-size: 11px;
             }
-            QPushButton:hover { background-color: #233b2a; color: #ffffff; }
+            QPushButton:hover {
+                background: #1a2a1f; color: #e8f5e9; border-color: #4ade80;
+            }
+            QPushButton:pressed { background: #243b2a; }
         """
 
-        # Botones de Conexión y Control
+        # Botones de control
         self.btn_connect = QPushButton("Conectar Serie")
-        self.btn_connect.setStyleSheet(pill_green)
+        self.btn_connect.setStyleSheet(pill_primary)
         self.btn_connect.clicked.connect(self._toggle_connection)
 
         self.btn_demo = QPushButton("Modo Demo")
-        self.btn_demo.setStyleSheet(pill_green)
+        self.btn_demo.setStyleSheet(pill_primary)
         self.btn_demo.clicked.connect(self._toggle_demo_mode)
 
         self.btn_pause = QPushButton("Pausar Tiempo")
-        self.btn_pause.setStyleSheet(pill_accent)
+        self.btn_pause.setStyleSheet(pill_secondary)
         self.btn_pause.clicked.connect(self._toggle_pause)
         self.btn_pause.setEnabled(True)
 
         self.btn_clear = QPushButton("Limpiar Datos")
-        self.btn_clear.setStyleSheet(pill_accent)
+        self.btn_clear.setStyleSheet(pill_secondary)
         self.btn_clear.clicked.connect(self._clear_data)
 
-        # LED indicador + texto de estado
+        # LED + Estado
         from gui.widgets import LEDIndicator
-        self.led_status = LEDIndicator(self, size=12)
+        self.led_status = LEDIndicator(self, size=10)
 
-        self.label_serial_status = QLabel("Desconectado")
+        self.label_serial_status = QLabel("● Desconectado")
         self.label_serial_status.setFont(QFont("Segoe UI", 9, QFont.Bold))
         self.label_serial_status.setStyleSheet("color: #ef4444;")
 
-        # Acciones de Exportación
+        # Exportación y herramientas
         self.btn_excel = QPushButton("Exportar Excel")
-        self.btn_excel.setStyleSheet(pill_accent)
+        self.btn_excel.setStyleSheet(pill_secondary)
         self.btn_excel.clicked.connect(self._export_excel)
 
         self.btn_pdf = QPushButton("Generar Reporte")
-        self.btn_pdf.setStyleSheet(pill_accent)
+        self.btn_pdf.setStyleSheet(pill_secondary)
         self.btn_pdf.clicked.connect(self._export_pdf)
 
-        self.btn_dev_nn = QPushButton("🌿 Red Neuronal")
-        self.btn_dev_nn.setStyleSheet(pill_green)
+        self.btn_dev_nn = QPushButton("🧠 Red Neuronal")
+        self.btn_dev_nn.setStyleSheet(pill_primary)
         self.btn_dev_nn.clicked.connect(self._open_protected_dev_panel)
 
         self.btn_fullscreen = QPushButton("Restaurar Ventana")
-        self.btn_fullscreen.setStyleSheet(pill_accent)
+        self.btn_fullscreen.setStyleSheet(pill_secondary)
         self.btn_fullscreen.clicked.connect(self._toggle_fullscreen)
 
         self.btn_settings = QPushButton("⚙️ Ajustes")
-        self.btn_settings.setStyleSheet(pill_accent)
+        self.btn_settings.setStyleSheet(pill_secondary)
         self.btn_settings.clicked.connect(self._open_settings)
 
-        # Perfil de Usuario
+        # Perfil de usuario
         self.auth_mgr = get_auth_manager()
         self.btn_user_profile = QPushButton("👤 Administrador")
-        self.btn_user_profile.setStyleSheet(pill_accent)
+        self.btn_user_profile.setStyleSheet(pill_secondary)
         self.btn_user_profile.clicked.connect(self._open_user_profile)
         self._update_user_badge()
 
-        control_layout.addWidget(self.btn_connect)
-        control_layout.addWidget(self.btn_demo)
-        control_layout.addWidget(self.btn_pause)
-        control_layout.addWidget(self.btn_clear)
-        control_layout.addSpacing(4)
-        control_layout.addWidget(self.led_status)
-        control_layout.addWidget(self.label_serial_status)
-        control_layout.addStretch()
-        control_layout.addWidget(self.btn_excel)
-        control_layout.addWidget(self.btn_pdf)
-        control_layout.addWidget(self.btn_dev_nn)
-        control_layout.addWidget(self.btn_fullscreen)
-        control_layout.addWidget(self.btn_settings)
-        control_layout.addWidget(self.btn_user_profile)
+        # Ensamblar toolbar
+        for btn in [self.btn_connect, self.btn_demo, self.btn_pause, self.btn_clear]:
+            tb_layout.addWidget(btn)
+        tb_layout.addSpacing(6)
+        tb_layout.addWidget(self.led_status)
+        tb_layout.addWidget(self.label_serial_status)
+        tb_layout.addStretch()
+        for btn in [self.btn_excel, self.btn_pdf, self.btn_dev_nn,
+                    self.btn_fullscreen, self.btn_settings, self.btn_user_profile]:
+            tb_layout.addWidget(btn)
 
-
-        # --- PESTAÑAS PRINCIPALES DE LA APLICACIÓN (QTabWidget) ---
+        # ═══════════════════════════════════════════════════
+        #  PESTAÑAS PRINCIPALES
+        # ═══════════════════════════════════════════════════
         self.tab_widget = QTabWidget(self)
 
-        # Tab 1: Monitoreo Principal
         self.dashboard = DashboardWidget(self)
         self.tab_widget.addTab(self.dashboard, "🌿  Monitoreo Principal")
 
-        # Tab 2: Asistente IA Conversacional con Avatar Expresivo Píxel
         self.ai_chat_tab = AIChatTabWidget(main_window=self, parent=self)
         self.tab_widget.addTab(self.ai_chat_tab, "💬  Asistente IA - Conversación")
 
+        main_layout.addWidget(toolbar)
+        main_layout.addWidget(self.tab_widget, 1)
 
-        main_layout.addWidget(control_frame)
-        main_layout.addWidget(self.tab_widget)
-
-
-        # --- BARRA DE ESTADO INFERIOR ---
+        # ═══════════════════════════════════════════════════
+        #  BARRA DE ESTADO INFERIOR
+        # ═══════════════════════════════════════════════════
         self.status_bar = QStatusBar(self)
         self.setStatusBar(self.status_bar)
 
@@ -347,7 +369,7 @@ class MainWindow(QMainWindow):
 
         # Alertas Proactivas de la IA en el Chat Tab
         if hasattr(self, "ai_chat_tab"):
-            user_name = self.ai_agent.get_user_name()
+            user_name = self.ai_chat_tab.ai_agent.get_user_name()
             if temp > 28.5 and not getattr(self, "_alert_temp_high", False):
                 self._alert_temp_high = True
                 self.ai_chat_tab.add_proactive_alert(
@@ -366,11 +388,11 @@ class MainWindow(QMainWindow):
         """Refleja los cambios de conexión serial en el estado visual de la UI."""
         if is_connected:
             self.demo_timer.stop()
-            self.btn_demo.setText("🎮 Modo Demo")
-            self.btn_demo.setStyleSheet("background-color: #312e81; color: #c4b5fd;")
+            self.btn_demo.setText("Modo Demo")
+            self.btn_demo.setStyleSheet("background: #1a3524; color: #4ade80; border: 1px solid #2d5a3a; border-radius: 7px; padding: 6px 13px; font-weight: 600; font-size: 11px;")
 
             self.led_status.set_state("connected")
-            self.label_serial_status.setText("Conectado (Hardware)")
+            self.label_serial_status.setText("● Conectado (Hardware)")
             self.label_serial_status.setStyleSheet("color: #10b981;")
             self.btn_connect.setText("Desconectar")
             self.btn_connect.setObjectName("dangerButton")
@@ -379,7 +401,7 @@ class MainWindow(QMainWindow):
             self._apply_theme()
         else:
             self.led_status.set_state("disconnected")
-            self.label_serial_status.setText("Desconectado")
+            self.label_serial_status.setText("● Desconectado")
             self.label_serial_status.setStyleSheet("color: #ef4444;")
             self.btn_connect.setText("Conectar Serial")
             self.btn_connect.setObjectName("primaryButton")
@@ -391,9 +413,9 @@ class MainWindow(QMainWindow):
         """Activa o desactiva la simulación gráfica de demostración en tiempo real."""
         if self.demo_timer.isActive():
             self.demo_timer.stop()
-            self.btn_demo.setText("🎮 Modo Demo")
-            self.btn_demo.setStyleSheet("background-color: #312e81; color: #c4b5fd; font-weight: bold; border-radius: 6px; padding: 6px 14px;")
-            self.label_serial_status.setText("Desconectado")
+            self.btn_demo.setText("Modo Demo")
+            self.btn_demo.setStyleSheet("background: #1a3524; color: #4ade80; border: 1px solid #2d5a3a; border-radius: 7px; padding: 6px 13px; font-weight: 600; font-size: 11px;")
+            self.label_serial_status.setText("● Desconectado")
             self.label_serial_status.setStyleSheet("color: #ef4444;")
             self.led_status.set_state("disconnected")
             self.dashboard.log_message("Simulación Demo detenida por el usuario.")
@@ -404,9 +426,9 @@ class MainWindow(QMainWindow):
                 self._seed_initial_data()
             self.demo_timer.start()
             self.btn_demo.setText("⏹️ Detener Demo")
-            self.btn_demo.setStyleSheet("background-color: #7c3aed; color: #ffffff; font-weight: bold; border-radius: 6px; padding: 6px 14px;")
-            self.label_serial_status.setText("Simulación Demo (Activa)")
-            self.label_serial_status.setStyleSheet("color: #c084fc;")
+            self.btn_demo.setStyleSheet("background: #2d6b44; color: #e8f5e9; border: 1px solid #4ade80; border-radius: 7px; padding: 6px 13px; font-weight: 600; font-size: 11px;")
+            self.label_serial_status.setText("● Simulación Demo (Activa)")
+            self.label_serial_status.setStyleSheet("color: #4ade80;")
             self.led_status.set_state("stabilizing")
             self.btn_pause.setEnabled(True)
             self.stats_manager.start()
@@ -438,7 +460,7 @@ class MainWindow(QMainWindow):
         else:
             if self.demo_timer.isActive():
                 self.demo_timer.stop()
-                self.btn_demo.setText("🎮 Modo Demo")
+                self.btn_demo.setText("Modo Demo")
 
             # Detectar puertos USB o ACM disponibles
             available_ports = SerialReader.list_available_ports()
