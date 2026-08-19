@@ -1,18 +1,19 @@
 # =====================================================================
 #  SIMA — Sistema Inteligente de Monitoreo Ambiental
-#  Especificación de Dependencias del Sistema (v1.0.0)
+#  Especificación de Dependencias del Sistema (v2.0.0)
 # =====================================================================
 
 # --- Core y Comunicación Serial ---
 pyserial==3.5
 
-# --- Interfaz Gráfica (Qt para Python) ---
+# --- Interfaz Gráfica Qt + WebEngine para HTML/CSS/JS ---
 PySide6==6.11.1
 PySide6_Addons==6.11.1
 PySide6_Essentials==6.11.1
+PySide6-WebEngine==6.11.1
 shiboken6==6.11.1
 
-# --- Visualización de Gráficas en Tiempo Real ---
+# --- Visualización de Gráficas en Tiempo Real (backend/legacy compatibility) ---
 pyqtgraph==0.14.0
 
 # --- Procesamiento y Análisis Científico de Datos / IA ---
