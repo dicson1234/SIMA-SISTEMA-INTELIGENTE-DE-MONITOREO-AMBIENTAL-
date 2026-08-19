@@ -1,0 +1,27 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Databases
+*.db
+*.sqlite3
+config/*.db
+
+# Generated Exports and Logs
+reports/*.pdf
+excel/*.xlsx
+logs/*.log
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+*.swp

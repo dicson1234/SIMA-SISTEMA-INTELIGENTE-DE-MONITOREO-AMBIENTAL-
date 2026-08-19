@@ -1,0 +1,16 @@
+{
+    "auto_save_excel": true,
+    "auto_start": false,
+    "excel_autosave_interval": 30,
+    "excel_directory": "/home/dicson/Arduino/trabajo/excel",
+    "graphs_directory": "/home/dicson/Arduino/trabajo/graphs",
+    "max_samples": 100,
+    "reports_directory": "/home/dicson/Arduino/trabajo/reports",
+    "serial_baudrate": 9600,
+    "serial_port": "/dev/ttyUSB0",
+    "theme": "dark",
+    "ui_update_interval": 2000,
+    "window_height": 800,
+    "window_maximized": false,
+    "window_width": 1280
+}
