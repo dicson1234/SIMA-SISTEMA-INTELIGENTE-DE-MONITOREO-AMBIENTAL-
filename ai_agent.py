@@ -98,8 +98,11 @@ class AIAgentEngine:
         """Consulta la REST API de Google Gemini enviando el historial conversacional."""
         # Si no se pasó una clave directa, intentar usar la de la instancia
         key = self.api_key
-        if not key or not isinstance(key, str) or len(key) < 10:
+        if not key or not isinstance(key, str) or len(key.strip()) < 10:
+            logger.error("API Key de Gemini inválida o vacía. Longitud: %d", len(key) if key else 0)
             return None
+
+        logger.info("Intentando consulta a Gemini con key de longitud: %d", len(key))
 
         # Lista de modelos válidos para la REST API de Google Gemini (ordenados por velocidad)
         model_candidates = [
@@ -136,6 +139,7 @@ class AIAgentEngine:
         for m_name in model_candidates:
             clean_m = m_name.replace("models/", "")
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{clean_m}:generateContent?key={key}"
+            logger.info("Consultando modelo: %s", clean_m)
             try:
                 req = urllib.request.Request(url, data=data_bytes, headers={"Content-Type": "application/json"}, method="POST")
                 with urllib.request.urlopen(req, timeout=30.0) as response:
@@ -147,13 +151,30 @@ class AIAgentEngine:
                             if parts:
                                 text_out = parts[0].get("text", "").strip()
                                 if text_out:
-                                    logger.info("Respuesta obtenida exitosamente desde Google Gemini API (%s)", clean_m)
+                                    logger.info("✓ Respuesta obtenida exitosamente desde Google Gemini API (%s)", clean_m)
                                     return text_out
+                                else:
+                                    logger.warning("Respuesta vacía de Gemini (%s)", clean_m)
+                            else:
+                                logger.warning("Sin partes en respuesta de Gemini (%s)", clean_m)
+                        else:
+                            logger.warning("Sin candidatos en respuesta de Gemini (%s)", clean_m)
+                    else:
+                        logger.error("Status code inesperado: %d", response.status)
             except urllib.error.HTTPError as e:
                 error_body = e.read().decode("utf-8") if hasattr(e, 'read') else str(e)
-                logger.error("Gemini REST HTTP Error %s: %s - Response: %s", e.code, clean_m, error_body)
+                logger.error("✗ Gemini REST HTTP Error %d (%s): %s", e.code, clean_m, error_body[:200] if error_body else "Sin cuerpo")
+                # Si es error 400 o 403, la API key probablemente es inválida
+                if e.code in [400, 403]:
+                    logger.critical("API Key rechazada por Google. Verifica que sea válida y tenga permisos.")
+                    return None
+            except urllib.error.URLError as e:
+                logger.error("✗ Error de conexión con Gemini (%s): %s", clean_m, e.reason)
+                return None
+            except TimeoutError:
+                logger.error("✗ Timeout superado para modelo %s", clean_m)
             except Exception as e:
-                logger.warning("Gemini REST model %s intento fallido: %s", clean_m, e)
+                logger.error("✗ Error inesperado en modelo %s: %s", clean_m, str(e))
 
         return None
 
