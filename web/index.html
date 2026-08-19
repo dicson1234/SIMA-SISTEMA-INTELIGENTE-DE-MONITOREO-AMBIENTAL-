@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>SIMA 2.0</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark" title="SIMA">
+        <span>⌁</span>
+      </div>
+      <div class="toolbar-group">
+        <button class="tool primary" data-action="connect">Conectar Serial</button>
+        <button class="tool" data-action="demo">Modo Demo</button>
+        <button class="tool" data-action="pause">Pausar Tiempo</button>
+        <button class="tool" data-action="clear">Limpiar Datos</button>
+      </div>
+      <div class="connection-chip" id="connectionChip"><span class="dot"></span><span id="connectionText">Desconectado</span></div>
+      <div class="toolbar-group right">
+        <button class="tool" data-action="excel">Exportar Excel</button>
+        <button class="tool" data-action="pdf">Generar Reporte</button>
+        <button class="tool" data-action="nn">⌁ Red Neuronal</button>
+        <button class="tool" data-action="fullscreen">Restaurar Ventana</button>
+        <button class="tool" data-action="settings">⚙ Ajustes</button>
+        <button class="tool primary" data-action="profile">♟ <span id="userName">Administrador</span></button>
+      </div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="monitor">⌁ &nbsp;Monitoreo Principal</button>
+      <button class="tab" data-tab="assistant">◉ &nbsp;Asistente IA - Conversación</button>
+    </nav>
+
+    <main>
+      <section class="tab-panel active" id="monitorPanel">
+        <div class="section-card intro-card">
+          <div>
+            <div class="eyebrow">SIMA 2.0</div>
+            <h1>Monitoreo Ambiental</h1>
+            <p>Visión en tiempo real del estado ambiental, tendencias y comportamiento del sistema.</p>
+          </div>
+          <div class="ready-badge"><span class="mini-dot"></span><span id="readyText">MONITOREO LISTO</span></div>
+        </div>
+
+        <section class="metrics-grid">
+          <article class="metric-card">
+            <div class="metric-icon">♨</div>
+            <div class="metric-label">Temperatura</div>
+            <div class="metric-value"><span id="tempValue">--.-</span><small>°C</small></div>
+            <div class="metric-status" id="tempStatus">● Sin lectura</div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-icon">◌</div>
+            <div class="metric-label">Humedad Relativa</div>
+            <div class="metric-value"><span id="humValue">--.-</span><small>%</small></div>
+            <div class="metric-status" id="humStatus">● Sin lectura</div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-icon">⠿</div>
+            <div class="metric-label">Confort Ambiental</div>
+            <div class="metric-value"><span id="comfortValue">--</span><small>pts</small></div>
+            <div class="metric-status" id="comfortStatus">● Sin lectura</div>
+          </article>
+          <article class="metric-card muted-card">
+            <div class="metric-icon amber">◉</div>
+            <div class="metric-label">PM2.5</div>
+            <div class="metric-value"><span>—</span><small>µg/m³</small></div>
+            <div class="metric-status">● Sensor no disponible</div>
+          </article>
+          <article class="metric-card muted-card">
+            <div class="metric-icon amber">◉</div>
+            <div class="metric-label">Luminosidad</div>
+            <div class="metric-value"><span id="lightValue">—</span><small>lux</small></div>
+            <div class="metric-status" id="lightStatus">● Sin lectura</div>
+          </article>
+        </section>
+
+        <section class="analytics-grid">
+          <article class="section-card chart-card">
+            <div class="card-heading"><div><span class="card-title">Tendencias</span><span class="card-subtitle">Lecturas recientes</span></div><span class="live-pill">● EN VIVO</span></div>
+            <div class="chart-row"><div class="axis-label">°C</div><canvas id="tempChart"></canvas></div>
+            <div class="chart-row"><div class="axis-label">%</div><canvas id="humChart"></canvas></div>
+          </article>
+          <article class="section-card history-card">
+            <div class="card-heading"><div><span class="card-title">Historial</span><span class="card-subtitle">Resumen de la sesión</span></div><span class="count-pill" id="sampleCount">0 muestras</span></div>
+            <div class="history-list" id="historyList"><div class="empty-state">Aún no hay lecturas para mostrar.</div></div>
+            <div class="card-footer"><span id="portInfo">Puerto: —</span><span id="statusInfo">SIMA 2.0 · Monitoreo dinámico</span></div>
+          </article>
+        </section>
+      </section>
+
+      <section class="tab-panel" id="assistantPanel">
+        <div class="section-card assistant-header">
+          <div>
+            <div class="eyebrow">INTELIGENCIA AMBIENTAL</div>
+            <h2>Asistente Conversacional IA</h2>
+            <p>Motor de conversación inteligente para análisis y consultas ambientales.</p>
+          </div>
+          <button class="reset-btn" id="resetChat">↻ Reiniciar Chat</button>
+        </div>
+
+        <section class="assistant-layout">
+          <aside class="assistant-side">
+            <article class="section-card face-card">
+              <div class="assistant-name">⌁ Asistente Ambiental</div>
+              <div class="face-orb">
+                <div class="pixel-face" id="pixelFace" aria-label="Avatar IA"></div>
+              </div>
+              <div class="assistant-copy">Estoy aquí para ayudarte a entender tus datos y cuidar nuestro entorno.</div>
+            </article>
+            <article class="section-card quick-card">
+              <div class="card-title">✦ Acciones Rápidas</div>
+              <button class="quick-btn" data-quick="Genera un reporte PDF completo">▣ &nbsp;Generar Reporte PDF</button>
+              <button class="quick-btn" data-quick="Exportar a Excel los datos actuales">▤ &nbsp;Exportar Hoja Excel</button>
+              <button class="quick-btn" data-quick="Redacta un ensayo técnico ambiental">✎ &nbsp;Redactar Ensayo Técnico</button>
+              <button class="quick-btn" data-quick="que tal la temperatura">♨ &nbsp;¿Cómo está la temperatura?</button>
+            </article>
+          </aside>
+
+          <section class="section-card chat-card">
+            <div class="chat-backdrop"></div>
+            <div class="chat-content">
+              <div class="chat-messages" id="chatMessages"></div>
+              <div class="chat-input-row">
+                <input id="chatInput" type="text" placeholder="Escribe un mensaje o pregúntame algo..." autocomplete="off">
+                <button id="sendBtn" class="send-btn">➤</button>
+              </div>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <footer class="footer-bar">
+      <div>⌁ &nbsp;<span id="footerPort">Puerto: —</span></div>
+      <div><span class="footer-dot"></span><span id="footerStatus">SIMA 2.0 Activo — Monitoreo dinámico en tiempo real.</span></div>
+    </footer>
+  </div>
+
+  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
