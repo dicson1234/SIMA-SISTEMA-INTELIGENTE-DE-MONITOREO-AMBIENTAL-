@@ -85,25 +85,78 @@ class SIMAWebBridge(QObject):
     def open_profile(self) -> None:
         self.window._open_user_profile()
 
+    def _process_ai_prompt(self, prompt: str) -> dict:
+        temp, hum = 24.0, 50.0
+        if hasattr(self.window, "sensor_manager") and self.window.sensor_manager.last_reading:
+            temp = self.window.sensor_manager.last_reading.temperature
+            hum = self.window.sensor_manager.last_reading.humidity
+
+        nn1, nn2 = {}, {}
+        if hasattr(self.window, "nn_manager"):
+            nn1 = self.window.nn_manager.get_ai_agent_summary(temp, hum)
+        if hasattr(self.window, "anomaly_nn"):
+            nn2 = self.window.anomaly_nn.get_summary()
+
+        try:
+            return self.window.ai_chat_tab.ai_agent.process_user_request(
+                prompt=prompt,
+                nn1_summary=nn1,
+                nn2_summary=nn2,
+                current_temp=temp,
+                current_hum=hum,
+            )
+        except Exception as e:
+            return {
+                "response": f"Sistema operativo. Telemetría actual: <b>{temp:.1f} °C</b> / <b>{hum:.1f} % RH</b>.",
+                "action_taken": None,
+                "action_details": str(e),
+                "expression_state": "HAPPY",
+            }
+
+    @Slot(str, result=str)
+    def send_message_sync(self, prompt: str) -> str:
+        prompt = (prompt or "").strip()
+        if not prompt:
+            return json.dumps({"response": "Escribe un mensaje.", "expression_state": "NORMAL"}, ensure_ascii=False)
+        self.send_message(prompt)
+        return json.dumps({"response": "Procesando con Google Gemini...", "expression_state": "THINKING"}, ensure_ascii=False)
+
     @Slot(str)
     def send_message(self, prompt: str) -> None:
         prompt = (prompt or "").strip()
         if not prompt:
             return
 
-        ai_tab = self.window.ai_chat_tab
-        temp, hum, nn1, nn2 = ai_tab._get_live_data()
-        self._worker = AIWorkerThread(
-            ai_tab.ai_agent,
-            prompt,
-            nn1,
-            nn2,
-            temp,
-            hum,
-            parent=self.window,
-        )
-        self._worker.response_ready.connect(self._on_ai_response)
-        self._worker.start()
+        temp, hum = 24.0, 50.0
+        if hasattr(self.window, "sensor_manager") and self.window.sensor_manager.last_reading:
+            temp = self.window.sensor_manager.last_reading.temperature
+            hum = self.window.sensor_manager.last_reading.humidity
+
+        nn1, nn2 = {}, {}
+        if hasattr(self.window, "nn_manager"):
+            nn1 = self.window.nn_manager.get_ai_agent_summary(temp, hum)
+        if hasattr(self.window, "anomaly_nn"):
+            nn2 = self.window.anomaly_nn.get_summary()
+
+        ai_agent = self.window.ai_chat_tab.ai_agent
+
+        # Cancelar cualquier worker anterior para evitar conflictos de hilos concurrentes
+        if self._worker and self._worker.isRunning():
+            try:
+                self._worker.terminate()
+                self._worker.wait()
+            except Exception:
+                pass
+
+        # Crear e iniciar hilo asíncrono para no bloquear la interfaz GUI
+        worker = AIWorkerThread(ai_agent, prompt, nn1, nn2, temp, hum, parent=self)
+        worker.response_ready.connect(self._on_worker_response)
+        worker.finished.connect(worker.deleteLater)
+        self._worker = worker
+        worker.start()
+
+    def _on_worker_response(self, res_dict: dict) -> None:
+        self.ai_response.emit(json.dumps(res_dict, ensure_ascii=False))
 
     @Slot()
     def reset_chat(self) -> None:
@@ -187,14 +240,13 @@ class WebMainWindow(MainWindow):
         self.setCentralWidget(host)
 
         self.web_bridge = SIMAWebBridge(self)
-        self.web_channel = QWebChannel(self.web_view.page())
+        self.web_channel = QWebChannel(self)
         self.web_channel.registerObject("bridge", self.web_bridge)
         self.web_view.page().setWebChannel(self.web_channel)
         self.web_view.loadFinished.connect(self._on_web_loaded)
 
         html_path = Path(__file__).resolve().parent.parent / "web" / "index.html"
-        base_url = QUrl.fromLocalFile(str(html_path.parent.resolve()) + "/")
-        self.web_view.setHtml(html_path.read_text(encoding="utf-8"), base_url)
+        self.web_view.setUrl(QUrl.fromLocalFile(str(html_path.resolve())))
 
     def _on_web_loaded(self, ok: bool) -> None:
         if ok:

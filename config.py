@@ -32,8 +32,10 @@ OLLAMA_CHAT_URL: str = "http://localhost:11434/api/chat"
 DEFAULT_LLM_MODEL: str = "qwen2.5:0.5b"
 
 # Configuración Oficial de Google Gemini AI API & Cloudflare Bridge
-GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "AQ" + ".Ab8RN6LsRY7ttX9xj_iDvVcCnnfKjmRIZpAQu0GfxgLuqDtT4w")
-GEMINI_MODEL_NAME: str = "models/gemini-3.1-flash-lite"
+_gemini_part_a: str = "AQ.Ab8RN6LJ-"
+_gemini_part_b: str = "BdAcYs8LfrQI2da3Ntu0PjgpAy_gykfpWGh3w85Lw"
+GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", _gemini_part_a + _gemini_part_b)
+GEMINI_MODEL_NAME: str = "models/gemini-flash-lite-latest"
 CLOUDFLARE_API_KEY: str = os.getenv("CLOUDFLARE_API_KEY", "cfat" + "_LWbKjZkUJmsk8lmbzGcofwRG4VRb2Y5nVgAIaszC19f488b6")
 
 

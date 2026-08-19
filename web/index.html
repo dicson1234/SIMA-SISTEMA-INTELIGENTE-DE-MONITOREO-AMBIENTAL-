@@ -47,31 +47,41 @@
 
         <section class="metrics-grid">
           <article class="metric-card">
-            <div class="metric-icon">♨</div>
+            <div class="metric-icon thermo">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+            </div>
             <div class="metric-label">Temperatura</div>
             <div class="metric-value"><span id="tempValue">--.-</span><small>°C</small></div>
             <div class="metric-status" id="tempStatus">● Sin lectura</div>
           </article>
           <article class="metric-card">
-            <div class="metric-icon">◌</div>
+            <div class="metric-icon droplet">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            </div>
             <div class="metric-label">Humedad Relativa</div>
             <div class="metric-value"><span id="humValue">--.-</span><small>%</small></div>
             <div class="metric-status" id="humStatus">● Sin lectura</div>
           </article>
           <article class="metric-card">
-            <div class="metric-icon">⠿</div>
+            <div class="metric-icon leaf">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+            </div>
             <div class="metric-label">Confort Ambiental</div>
             <div class="metric-value"><span id="comfortValue">--</span><small>pts</small></div>
             <div class="metric-status" id="comfortStatus">● Sin lectura</div>
           </article>
           <article class="metric-card muted-card">
-            <div class="metric-icon amber">◉</div>
+            <div class="metric-icon wind">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+            </div>
             <div class="metric-label">PM2.5</div>
             <div class="metric-value"><span>—</span><small>µg/m³</small></div>
             <div class="metric-status">● Sensor no disponible</div>
           </article>
           <article class="metric-card muted-card">
-            <div class="metric-icon amber">◉</div>
+            <div class="metric-icon sun">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            </div>
             <div class="metric-label">Luminosidad</div>
             <div class="metric-value"><span id="lightValue">—</span><small>lux</small></div>
             <div class="metric-status" id="lightStatus">● Sin lectura</div>
@@ -79,11 +89,41 @@
         </section>
 
         <section class="analytics-grid">
-          <article class="section-card chart-card">
-            <div class="card-heading"><div><span class="card-title">Tendencias</span><span class="card-subtitle">Lecturas recientes</span></div><span class="live-pill">● EN VIVO</span></div>
-            <div class="chart-row"><div class="axis-label">°C</div><canvas id="tempChart"></canvas></div>
-            <div class="chart-row"><div class="axis-label">%</div><canvas id="humChart"></canvas></div>
-          </article>
+          <div class="charts-column">
+            <article class="section-card chart-frame-card">
+              <div class="card-heading">
+                <div>
+                  <span class="card-title">🌡️ TEMPERATURA EN TIEMPO REAL</span>
+                  <div class="chart-stats-row">
+                    <span>Mín: <strong id="tempMin">--.-</strong>°C</span>
+                    <span>Máx: <strong id="tempMax">--.-</strong>°C</span>
+                    <span>Prom: <strong id="tempAvg">--.-</strong>°C</span>
+                  </div>
+                </div>
+                <span class="live-val-pill" id="tempLivePill">--.- °C</span>
+              </div>
+              <div class="chart-canvas-container">
+                <canvas id="tempChart"></canvas>
+              </div>
+            </article>
+
+            <article class="section-card chart-frame-card">
+              <div class="card-heading">
+                <div>
+                  <span class="card-title">💧 HUMEDAD RELATIVA EN TIEMPO REAL</span>
+                  <div class="chart-stats-row">
+                    <span>Mín: <strong id="humMin">--.-</strong>%</span>
+                    <span>Máx: <strong id="humMax">--.-</strong>%</span>
+                    <span>Prom: <strong id="humAvg">--.-</strong>%</span>
+                  </div>
+                </div>
+                <span class="live-val-pill hum" id="humLivePill">--.- %</span>
+              </div>
+              <div class="chart-canvas-container">
+                <canvas id="humChart"></canvas>
+              </div>
+            </article>
+          </div>
           <article class="section-card history-card">
             <div class="card-heading"><div><span class="card-title">Historial</span><span class="card-subtitle">Resumen de la sesión</span></div><span class="count-pill" id="sampleCount">0 muestras</span></div>
             <div class="history-list" id="historyList"><div class="empty-state">Aún no hay lecturas para mostrar.</div></div>
@@ -140,7 +180,7 @@
     </footer>
   </div>
 
-  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+  <script src="qwebchannel.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

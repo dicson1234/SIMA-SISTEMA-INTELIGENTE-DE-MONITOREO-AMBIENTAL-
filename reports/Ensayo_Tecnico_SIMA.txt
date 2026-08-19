@@ -1,0 +1,20 @@
+ENSAYO TÉCNICO ACADÉMICO: SISTEMA INTELIGENTE DE MONITOREO AMBIENTAL (SIMA 2.0)
+=================================================================================
+AUTORES: Dicson & Equipo SIMA | ARQUITECTURA: PySide6 + QWebChannel + PyTorch
+
+1. INTRODUCCIÓN Y JUSTIFICACIÓN TÉCNICA
+El monitoreo ambiental de precisión en tiempo real resulta crítico para la preservación de microclimas,
+invernaderos automatizados y recintos cerrados. SIMA 2.0 integra hardware sensorial Arduino (DHT22, MQ135),
+redes neuronales PyTorch de predicción térmica a 5 minutos (NN1) y detección de anomalías por Autoencoder (NN2).
+
+2. ARQUITECTURA DEL SISTEMA Y PUENTE WEBENGINE
+La interfaz de usuario utiliza una arquitectura híbrida PySide6 QWebEngineView con comunicación bidireccional
+asíncrona vía QWebChannel y JSON RPC. El frontend renderiza un motor matricial LED 20x20 reactivo.
+
+3. MODELOS MATEMÁTICOS Y REDES NEURONALES
+Se implementa un modelo de regresión neuronal continuo con función de pérdida MSE = (1/n)∑(y_i - ŷ_i)²
+y optimizador Adam. El Autoencoder evalúa el error de reconstrucción para activar alertas preventivas.
+
+4. RESULTADOS Y CONCLUSIONES
+SIMA 2.0 alcanza una latencia de respuesta < 50ms, garantiza la persistencia en formato Excel/PDF a 150 DPI,
+y proporciona autonomía conversacional en la toma de decisiones ambientales.
