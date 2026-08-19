@@ -240,8 +240,11 @@ class AIAgentEngine:
     ) -> Optional[Dict[str, Any]]:
         """Analiza los datos del sistema y devuelve una alerta proactiva si detecta riesgos futuros."""
         user_name = self.chat_nn.user_name
-        risk_pct = nn2_summary.get("risk_percentage", 0.0)
-        pred_temp = nn1_summary.get("predictions", {}).get("future_5steps", {}).get("temp", current_temp)
+        risk_pct = nn2_summary.get("risk_percentage", 0.0) if isinstance(nn2_summary, dict) else 0.0
+        preds = (nn1_summary.get("predictions") if isinstance(nn1_summary, dict) and isinstance(nn1_summary.get("predictions"), dict) else {}) or {}
+        fut_5 = (preds.get("future_5steps") if isinstance(preds.get("future_5steps"), dict) else {}) or {}
+        pred_temp = fut_5.get("temp", current_temp)
+
         
         # 1. Alerta por Anomaly Autoencoder Risk (NN2)
         if risk_pct > 35.0:
@@ -377,6 +380,10 @@ class AIAgentEngine:
         else:
             first_turn_rule = f"NO saludes de nuevo ni digas 'Hola {user_name}'. Responde directamente a la pregunta sin repetir presentaciones."
 
+        nn1_preds = (nn1_summary.get("predictions") if isinstance(nn1_summary, dict) and isinstance(nn1_summary.get("predictions"), dict) else {}) or {}
+        nn1_fut5 = (nn1_preds.get("future_5steps") if isinstance(nn1_preds.get("future_5steps"), dict) else {}) or {}
+        pred_temp_val = nn1_fut5.get("temp", current_temp)
+
         system_instruction = (
             f"Eres SIMA AI, la Inteligencia Artificial del Sistema de Monitoreo Ambiental.\n"
             f"REGLAS DE DIÁLOGO:\n"
@@ -384,7 +391,7 @@ class AIAgentEngine:
             f"2. Mantén respuestas concisas, profesionales, amables y fluidas.\n"
             f"3. DATOS EN TIEMPO REAL: Temp={current_temp:.1f}°C, Humedad={current_hum:.1f}%, Muestras Totales={total_samples_real:,}.\n"
             f"4. Estado Hardware: Puerto {'Conectado' if is_connected else 'Desconectado'} ({port_name}), Demo={'Si' if is_demo else 'No'}.\n"
-            f"5. Red Neuronal Predictiva: Predicción 5min={nn1_summary.get('predictions',{}).get('future_5steps',{}).get('temp', current_temp):.1f}°C, Riesgo Anomalía={risk_pct:.1f}%.\n"
+            f"5. Red Neuronal Predictiva: Predicción 5min={pred_temp_val:.1f}°C, Riesgo Anomalía={risk_pct:.1f}%.\n"
             f"6. Usa formato HTML ligero con <b> y <code> cuando sea relevante.\n"
         )
         full_prompt = f"{system_instruction}\n\nConsulta del usuario: {prompt}"
@@ -417,12 +424,11 @@ class AIAgentEngine:
                 resp = f"La temperatura actual es de <b>{current_temp:.1f} °C</b> con un <b>{current_hum:.1f} %</b> de humedad. Se considera un clima confortable y templado."
 
         elif any(w in p_clean for w in ["prediccion", "futuro", "red neuronal", "ia"]):
-
-            fut_t = nn1_summary.get("predictions", {}).get("future_5steps", {}).get("temp", current_temp + 0.3)
             resp = (
-                f"Nuestra Red Neuronal predictiva pronostica una temperatura de <b>{fut_t:.1f} °C</b> a 5 minutos.<br>"
+                f"Nuestra Red Neuronal predictiva pronostica una temperatura de <b>{pred_temp_val:.1f} °C</b> a 5 minutos.<br>"
                 f"El índice de riesgo de anomalías (NN2 Autoencoder) se ubica en <b>{risk_pct:.1f} %</b>."
             )
+
         else:
             resp = f"Monitoreamos en tiempo real <b>{current_temp:.1f} °C</b> y <b>{current_hum:.1f} % RH</b> sobre un total de <b>{total_samples_real:,} muestras</b>."
 

@@ -72,8 +72,9 @@ class AIWorkerThread(QThread):
                 nn2_summary=self.nn2, current_temp=self.t, current_hum=self.h
             )
         except Exception as e:
-            log_exception(e, "Error en AIWorkerThread")
+            log_exception("Error en AIWorkerThread", e)
             res = {
+
                 "response": f"Sistema operativo a {self.t:.1f}°C / {self.h:.1f}% RH.",
                 "action_taken": None, "action_details": None,
                 "expression_state": "HAPPY"
