@@ -37,8 +37,9 @@ class AIFaceWidget(QWidget):
 
     def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
-        self.setMinimumSize(300, 240)
-        self.setMaximumHeight(280)
+        self.setMinimumSize(160, 130)  # Tamaño mínimo ajustado para encajar en el círculo
+        self.setMaximumSize(180, 150)  # Tamaño máximo para evitar desbordamientos
+        self.setFixedSize(170, 140)    # Tamaño fijo optimizado
 
         # Estado inicial
         self.current_state = self.STATE_NORMAL
@@ -123,7 +124,7 @@ class AIFaceWidget(QWidget):
         h = self.height()
 
         # 1. Dibujar Pantalla / Visor del Robot (Chasis Glassmorphic Oscuro)
-        margin = 12
+        margin = 8  # Margen reducido para mejor ajuste
         visor_rect = QRectF(margin, margin, w - 2 * margin, h - 2 * margin)
 
         bg_grad = QLinearGradient(0, 0, 0, h)
@@ -134,12 +135,12 @@ class AIFaceWidget(QWidget):
         border_col = self._get_primary_color()
         pen = QPen(border_col, 2)
         painter.setPen(pen)
-        painter.drawRoundedRect(visor_rect, 18, 18)
+        painter.drawRoundedRect(visor_rect, 14, 14)  # Bordes ligeramente más pequeños
 
-        # 2. Configurar Grilla de Píxeles (Pixel Matrix)
+        # 2. Configurar Grilla de Píxeles (Pixel Matrix) - Escalada para el nuevo tamaño
         # Cada ojo es una grilla de 10x10 píxeles
-        pixel_size = 7.0
-        gap = 1.5
+        pixel_size = 5.5  # Píxeles más pequeños para encajar mejor
+        gap = 1.2
         eye_grid_cols = 10
         eye_grid_rows = 10
 
@@ -147,8 +148,8 @@ class AIFaceWidget(QWidget):
         grid_h = eye_grid_rows * (pixel_size + gap)
 
         center_x = w / 2.0
-        center_y = h / 2.0 - 10.0
-        eye_spacing = grid_w + 30.0
+        center_y = h / 2.0 - 8.0  # Ajustado para el nuevo tamaño
+        eye_spacing = grid_w + 22.0  # Espaciado reducido entre ojos
 
         left_origin = QPointF(center_x - eye_spacing / 2.0 - grid_w / 2.0 + self.idle_look_x * pixel_size,
                               center_y - grid_h / 2.0 + self.idle_look_y * pixel_size)
@@ -174,7 +175,7 @@ class AIFaceWidget(QWidget):
             self._draw_pixel_blush(painter, left_origin, right_origin, grid_w, grid_h, pixel_size, gap)
 
         # 4. Dibujar Boca Píxel / Indicador de Voz
-        self._draw_pixel_mouth(painter, center_x, center_y + grid_h / 2.0 + 20.0, pixel_size, gap)
+        self._draw_pixel_mouth(painter, center_x, center_y + grid_h / 2.0 + 14.0, pixel_size, gap)
 
     def _get_primary_color(self) -> QColor:
         """Devuelve el color pastel primario según el estado emocional."""
@@ -468,7 +469,13 @@ class AIFaceWidget(QWidget):
 
 
 class AIFaceContainer(QFrame):
-    """Contenedor elegante que engloba la cara del robot con su etiqueta de estado pastel."""
+    """Contenedor elegante que engloba la cara del robot SIN barra de estado horizontal.
+    
+    Según los requisitos de diseño:
+    - ELIMINAR completamente la barra horizontal de "SIMA AI — Estado: En línea"
+    - El estado de la IA se muestra de forma discreta en el encabezado del chat o como indicador sutil
+    - El avatar debe quedar completamente contenido sin desbordamientos
+    """
 
     def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
@@ -477,49 +484,34 @@ class AIFaceContainer(QFrame):
 
     def _init_ui(self) -> None:
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(12, 12, 12, 12)
-        layout.setSpacing(8)
+        layout.setContentsMargins(8, 8, 8, 8)
+        layout.setSpacing(4)
 
+        # Solo el avatar, SIN barra de estado horizontal
         self.avatar_face = AIFaceWidget(self)
-
-        self.lbl_status = QLabel("🩵 SIMA AI — Estado: En línea")
-        self.lbl_status.setAlignment(Qt.AlignCenter)
-        self.lbl_status.setFont(QFont("Segoe UI", 9.5, QFont.Bold))
-        self.lbl_status.setStyleSheet("color: #7dd3fc; background-color: #070b14; border-radius: 8px; padding: 6px;")
+        
+        # Indicador de estado DISCRETO integrado (punto de color pequeño)
+        self.status_indicator = QLabel("●")
+        self.status_indicator.setAlignment(Qt.AlignCenter)
+        self.status_indicator.setFont(QFont("Segoe UI", 8, QFont.Bold))
+        self.status_indicator.setStyleSheet("color: #6ee7b7; background: transparent;")
+        self.status_indicator.setFixedHeight(14)
 
         layout.addWidget(self.avatar_face)
-        layout.addWidget(self.lbl_status)
+        layout.addWidget(self.status_indicator)
 
     def set_state(self, state: str, status_msg: str = "") -> None:
-        """Actualiza la cara y la etiqueta de estado con colores pastel."""
+        """Actualiza la cara y el indicador discreto con colores pastel."""
         self.avatar_face.set_expression(state)
-        if not status_msg:
-            if state == AIFaceWidget.STATE_NORMAL:
-                status_msg = "🩵 SIMA AI — Estado: En línea"
-            elif state == AIFaceWidget.STATE_HAPPY:
-                status_msg = "💚 SIMA AI — Estado: Contento & Confortable"
-            elif state == AIFaceWidget.STATE_WINK:
-                status_msg = "😉 SIMA AI — Estado: Saludo Amigable"
-            elif state == AIFaceWidget.STATE_THINKING:
-                status_msg = "💜 SIMA AI — Estado: Procesando Solicitud..."
-            elif state == AIFaceWidget.STATE_TALKING:
-                status_msg = "💙 SIMA AI — Estado: Respondiendo..."
-            elif state == AIFaceWidget.STATE_WARN:
-                status_msg = "🧡 SIMA AI — Estado: Advertencia Ambiental"
-            elif state == AIFaceWidget.STATE_ALERT:
-                status_msg = "🔴 SIMA AI — Estado: Riesgo Detectado"
-            elif state == AIFaceWidget.STATE_LOVE:
-                status_msg = "💖 SIMA AI — Estado: Agradecido"
-            elif state == AIFaceWidget.STATE_HOT:
-                status_msg = "🔥 SIMA AI — Estado: Temperatura Alta (>28°C)"
-            elif state == AIFaceWidget.STATE_COLD:
-                status_msg = "❄️ SIMA AI — Estado: Clima Fresco/Frío (<15°C)"
-
-        style_color = "#7dd3fc"
+        
+        # Color del indicador según estado
+        style_color = "#6ee7b7"  # Verde por defecto (En línea)
         if state in [AIFaceWidget.STATE_HAPPY, AIFaceWidget.STATE_WINK]:
             style_color = "#6ee7b7"
         elif state == AIFaceWidget.STATE_THINKING:
             style_color = "#c084fc"
+        elif state == AIFaceWidget.STATE_TALKING:
+            style_color = "#7dd3fc"
         elif state == AIFaceWidget.STATE_WARN:
             style_color = "#fcd34d"
         elif state == AIFaceWidget.STATE_ALERT:
@@ -530,7 +522,12 @@ class AIFaceContainer(QFrame):
             style_color = "#fb923c"
         elif state == AIFaceWidget.STATE_COLD:
             style_color = "#38bdf8"
+        elif state == AIFaceWidget.STATE_SLEEPY:
+            style_color = "#818cf8"
+        elif state == AIFaceWidget.STATE_SURPRISED:
+            style_color = "#38bdf8"
+        elif state == AIFaceWidget.STATE_CONFUSED:
+            style_color = "#a78bfa"
 
-        self.lbl_status.setText(status_msg)
-        self.lbl_status.setStyleSheet(f"color: {style_color}; background-color: #070b14; border-radius: 8px; padding: 6px;")
+        self.status_indicator.setStyleSheet(f"color: {style_color}; background: transparent;")
 

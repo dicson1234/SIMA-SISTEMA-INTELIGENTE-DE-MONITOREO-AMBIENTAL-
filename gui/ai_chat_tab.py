@@ -197,11 +197,12 @@ class AIChatTabWidget(QWidget):
         av = QVBoxLayout(asst_card)
         av.setContentsMargins(14, 16, 14, 16)
         av.setSpacing(10)
-        av.setAlignment(Qt.AlignCenter)
+        av.setAlignment(Qt.AlignTop)  # Alinear hacia arriba para evitar desbordamientos
 
         # Círculo contenedor con resplandor para el AVATAR CON OJOS DIGITALES (AIFaceWidget)
         circle_container = QFrame()
         circle_container.setFixedSize(180, 150)
+        circle_container.setMaximumSize(180, 150)  # Prevenir crecimiento excesivo
         circle_container.setStyleSheet(f"""
             QFrame {{
                 background: qradialgradient(cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5,
@@ -217,6 +218,8 @@ class AIChatTabWidget(QWidget):
         # RESTAURACIÓN DEL AVATAR CON OJOS DIGITALES (MATRIZ LED)
         self.avatar_face = AIFaceWidget(circle_container)
         self.avatar_face.setFixedSize(160, 130)
+        self.avatar_face.setMaximumSize(160, 130)  # Prevenir desbordamiento
+        self.avatar_face.setMinimumSize(160, 130)
         circle_layout.addWidget(self.avatar_face, 0, Qt.AlignCenter)
 
         lbl_asst_name = QLabel("Asistente Ambiental")
