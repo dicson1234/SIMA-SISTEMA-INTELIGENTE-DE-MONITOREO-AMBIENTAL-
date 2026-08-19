@@ -1,14 +1,13 @@
 """
 SIMA — Sistema Inteligente de Monitoreo Ambiental
-Pestaña del Asistente IA Conversacional (gui/ai_chat_tab.py) — v6 Olive Nature Elegance
+Pestaña del Asistente IA Conversacional (gui/ai_chat_tab.py) — v7 Nature Elegance
 
-Rediseño fiel a la imagen de referencia #3:
-  - Paleta Oliva / Beige / Tierra Elegante.
-  - Encabezado con título "Asistente Conversacional IA", subtítulo y botón "Reiniciar Chat".
-  - Panel izquierdo con tarjeta limpia del Asistente Ambiental (avatar circular integrado sin desbordamientos).
-  - SIN barra horizontal flotante de estado ("SIMA AI — Estado: ..."). ELIMINADA POR COMPLETO.
-  - Botones de Acciones Rápidas compactos y elegantes.
-  - Burbujas de chat estilizadas (Usuario: verde oliva a la derecha; IA: tarjeta gris verdosa a la izquierda con hoja).
+Fiel a la 3ª imagen de referencia:
+  - 1. Avatar con ojos digitales (AIFaceWidget con Matriz LED) integrado en círculo oscuro con resplandor sutil.
+  - 2. SIN barra horizontal flotante de texto ("SIMA AI — Estado...").
+  - 3. Encabezado Hero del chat con banner ambiental boscoso y botón "Reiniciar Chat" flotante beige.
+  - 4. Burbujas de chat independientes estilizadas (IA en #242822 con badge de hoja; Usuario en #3a4632 con badge de usuario).
+  - 5. Acciones rápidas tipo tarjeta compacta con efecto hover beige.
 
 Autor:  Equipo SIMA — Diseñador UX/UI & Especialista IA
 Fecha:  2026-08-18
@@ -24,6 +23,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Slot, QThread, Signal, QTimer
 from PySide6.QtGui import QFont
 
+from gui.ai_avatar import AIFaceWidget
 from ai_agent import AIAgentEngine
 from logger_manager import get_logger, log_exception
 
@@ -34,8 +34,8 @@ logger = get_logger("ai_chat_tab")
 BG_DARK     = "#141714"
 BG_CARD     = "#1e221c"
 BG_CARD2    = "#252a23"
-BORDER      = "#2e342b"
-BORDER_HIGHLIGHT = "#3a4236"
+BORDER      = "#30372c"
+BORDER_LIGHT = "#3a4236"
 
 OLIVE       = "#6f7e5d"
 OLIVE_MID   = "#82936b"
@@ -49,7 +49,7 @@ TEXT_MAIN   = "#f2f0e8"
 TEXT_SEC    = "#c8c7be"
 TEXT_MUTED  = "#969890"
 
-USER_BG     = "#30372c"
+USER_BG     = "#3a4632"
 AI_BG       = "#242822"
 
 
@@ -83,7 +83,7 @@ class AIWorkerThread(QThread):
 
 
 class AIChatTabWidget(QWidget):
-    """Panel conversacional rediseñado según la 3ra imagen de referencia."""
+    """Panel conversacional rediseñado fiel a la 3ª imagen de referencia."""
 
     def __init__(self, main_window=None, parent=None):
         super().__init__(parent)
@@ -103,64 +103,67 @@ class AIChatTabWidget(QWidget):
 
     def _init_ui(self):
         root = QVBoxLayout(self)
-        root.setContentsMargins(12, 12, 12, 12)
+        root.setContentsMargins(10, 10, 10, 10)
         root.setSpacing(10)
 
-        # ── 1. ENCABEZADO DE LA SECCIÓN IA ──
+        # ── 1. ENCABEZADO "HERO" CON BANNER AMBIENTAL (PAISAJE BOSCOSO) ──
         header_card = QFrame()
+        header_card.setFixedHeight(95)
         header_card.setStyleSheet(f"""
             QFrame {{
-                background-color: {BG_CARD};
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #1a241b, stop:0.4 #253327, stop:0.8 #1e2a20, stop:1 #141b15);
                 border: 1px solid {BORDER};
-                border-radius: 12px;
+                border-radius: 14px;
             }}
         """)
         h_layout = QHBoxLayout(header_card)
-        h_layout.setContentsMargins(18, 14, 18, 14)
+        h_layout.setContentsMargins(20, 14, 20, 14)
         h_layout.setSpacing(14)
 
-        # Icono / Decoración ambiental sutil
+        # Icono de hoja en badge verde oliva
         header_icon = QLabel("🌿")
         header_icon.setFont(QFont("Segoe UI Emoji", 20))
-        header_icon.setFixedSize(40, 40)
+        header_icon.setFixedSize(44, 44)
         header_icon.setAlignment(Qt.AlignCenter)
         header_icon.setStyleSheet(f"""
-            background-color: {BG_CARD2};
-            border: 1px solid {BORDER_HIGHLIGHT};
-            border-radius: 20px;
+            background-color: rgba(37, 42, 35, 0.85);
+            border: 1px solid {BORDER_LIGHT};
+            border-radius: 22px;
         """)
 
         title_v = QVBoxLayout()
         title_v.setSpacing(2)
+        title_v.setAlignment(Qt.AlignVCenter)
 
         lbl_title = QLabel("Asistente Conversacional IA")
         lbl_title.setFont(QFont("Segoe UI", 15, QFont.Bold))
-        lbl_title.setStyleSheet(f"color: {TEXT_MAIN};")
+        lbl_title.setStyleSheet(f"color: {TEXT_MAIN}; background: transparent;")
 
         lbl_sub = QLabel("Motor de conversación inteligente para análisis y consultas ambientales.")
         lbl_sub.setFont(QFont("Segoe UI", 9.5))
-        lbl_sub.setStyleSheet(f"color: {TEXT_MUTED};")
+        lbl_sub.setStyleSheet(f"color: {TEXT_SEC}; background: transparent;")
 
         title_v.addWidget(lbl_title)
         title_v.addWidget(lbl_sub)
 
-        # Botón Reiniciar Chat
+        # Botón Reiniciar Chat estilo Beige Flotante (exacto a la referencia)
         self.btn_reset_chat = QPushButton("🔄  Reiniciar Chat")
         self.btn_reset_chat.setCursor(Qt.PointingHandCursor)
         self.btn_reset_chat.setStyleSheet(f"""
             QPushButton {{
-                background-color: {BG_CARD2};
-                color: {TEXT_MAIN};
-                border: 1px solid {BORDER_HIGHLIGHT};
-                border-radius: 8px;
-                padding: 8px 16px;
-                font-weight: 600;
-                font-size: 11px;
+                background-color: {BEIGE};
+                color: #141714;
+                border: 1px solid {BEIGE_DARK};
+                border-radius: 12px;
+                padding: 9px 18px;
+                font-weight: 700;
+                font-size: 11.5px;
             }}
             QPushButton:hover {{
-                background-color: {OLIVE};
-                color: {TEXT_MAIN};
-                border-color: {OLIVE_LIGHT};
+                background-color: {CREAM};
+                color: #141714;
+                border-color: {OLIVE};
             }}
         """)
         self.btn_reset_chat.clicked.connect(self._reset_chat)
@@ -171,51 +174,50 @@ class AIChatTabWidget(QWidget):
 
         root.addWidget(header_card)
 
-        # ── 2. SPLITTER: PANEL IZQ (AVATAR+ACCIONES) + PANEL DER (CHAT) ──
+        # ── 2. SPLITTER: PANEL IZQ (AVATAR LED + ACCIONES) + PANEL DER (CHAT) ──
         splitter = QSplitter(Qt.Horizontal)
         splitter.setHandleWidth(6)
         splitter.setStyleSheet(f"QSplitter::handle {{ background-color: {BORDER}; border-radius: 3px; }}")
 
-        # ━━━ PANEL IZQUIERDO: Tarjeta Asistente + Acciones Rápidas ━━━
+        # ━━━ PANEL IZQUIERDO: AVATAR CON OJOS DIGITALES MATRIZ LED + ACCIONES ━━━
         left = QWidget()
         lv = QVBoxLayout(left)
         lv.setContentsMargins(0, 0, 0, 0)
         lv.setSpacing(10)
 
-        # Tarjeta Asistente Ambiental (Avatar integrado en circulo beige/verde)
+        # Tarjeta Asistente Ambiental
         asst_card = QFrame()
         asst_card.setStyleSheet(f"""
             QFrame {{
                 background-color: {BG_CARD};
                 border: 1px solid {BORDER};
-                border-radius: 12px;
+                border-radius: 14px;
             }}
         """)
         av = QVBoxLayout(asst_card)
-        av.setContentsMargins(16, 20, 16, 20)
-        av.setSpacing(12)
+        av.setContentsMargins(14, 16, 14, 16)
+        av.setSpacing(10)
         av.setAlignment(Qt.AlignCenter)
 
-        # Círculo ilustrativo del Asistente ambiental
+        # Círculo contenedor con resplandor para el AVATAR CON OJOS DIGITALES (AIFaceWidget)
         circle_container = QFrame()
-        circle_container.setFixedSize(140, 140)
+        circle_container.setFixedSize(180, 150)
         circle_container.setStyleSheet(f"""
             QFrame {{
                 background: qradialgradient(cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5,
-                    stop:0 {CREAM}, stop:0.75 {BEIGE}, stop:1.0 {BEIGE_DARK});
+                    stop:0 #1a221b, stop:0.75 #141714, stop:1.0 #2e382b);
                 border: 2px solid {OLIVE_MID};
-                border-radius: 70px;
+                border-radius: 75px;
             }}
         """)
         circle_layout = QVBoxLayout(circle_container)
-        circle_layout.setContentsMargins(0, 0, 0, 0)
+        circle_layout.setContentsMargins(5, 5, 5, 5)
         circle_layout.setAlignment(Qt.AlignCenter)
 
-        lbl_leaf = QLabel("🌿")
-        lbl_leaf.setFont(QFont("Segoe UI Emoji", 42))
-        lbl_leaf.setAlignment(Qt.AlignCenter)
-        lbl_leaf.setStyleSheet("background: transparent;")
-        circle_layout.addWidget(lbl_leaf)
+        # RESTAURACIÓN DEL AVATAR CON OJOS DIGITALES (MATRIZ LED)
+        self.avatar_face = AIFaceWidget(circle_container)
+        self.avatar_face.setFixedSize(160, 130)
+        circle_layout.addWidget(self.avatar_face, 0, Qt.AlignCenter)
 
         lbl_asst_name = QLabel("Asistente Ambiental")
         lbl_asst_name.setFont(QFont("Segoe UI", 12, QFont.Bold))
@@ -238,7 +240,7 @@ class AIChatTabWidget(QWidget):
             QFrame {{
                 background-color: {BG_CARD};
                 border: 1px solid {BORDER};
-                border-radius: 12px;
+                border-radius: 14px;
             }}
         """)
         acv = QVBoxLayout(act_card)
@@ -255,15 +257,16 @@ class AIChatTabWidget(QWidget):
                 background-color: {BG_CARD2};
                 color: {TEXT_MAIN};
                 border: 1px solid {BORDER};
-                border-radius: 8px;
-                padding: 9px 12px;
+                border-radius: 10px;
+                padding: 10px 14px;
                 font-size: 11.5px;
                 text-align: left;
             }}
             QPushButton:hover {{
-                background-color: {OLIVE};
-                border-color: {OLIVE_LIGHT};
-                color: {TEXT_MAIN};
+                background-color: {BEIGE};
+                color: #141714;
+                border-color: {BEIGE_DARK};
+                font-weight: bold;
             }}
         """
         for label, query in [
@@ -282,7 +285,7 @@ class AIChatTabWidget(QWidget):
         lv.addWidget(act_card)
         lv.addStretch()
 
-        # ━━━ PANEL DERECHO: ÁREA DE CHAT ━━━
+        # ━━━ PANEL DERECHO: ÁREA DE CHAT CON BURBUJAS ESTILIZADAS ━━━
         right = QWidget()
         rv = QVBoxLayout(right)
         rv.setContentsMargins(0, 0, 0, 0)
@@ -293,14 +296,14 @@ class AIChatTabWidget(QWidget):
             QFrame {{
                 background-color: {BG_CARD};
                 border: 1px solid {BORDER};
-                border-radius: 12px;
+                border-radius: 14px;
             }}
         """)
         cfv = QVBoxLayout(chat_frame)
         cfv.setContentsMargins(0, 0, 0, 0)
         cfv.setSpacing(0)
 
-        # Consola de chat (QTextEdit)
+        # Consola de chat (QTextEdit estilizado)
         self.chat_display = QTextEdit()
         self.chat_display.setReadOnly(True)
         self.chat_display.setFont(QFont("Segoe UI", 10))
@@ -309,8 +312,8 @@ class AIChatTabWidget(QWidget):
                 background-color: {BG_DARK};
                 border: none;
                 color: {TEXT_MAIN};
-                padding: 16px;
-                border-radius: 12px 12px 0 0;
+                padding: 18px;
+                border-radius: 14px 14px 0 0;
             }}
             QScrollBar:vertical {{
                 background-color: {BG_DARK};
@@ -332,12 +335,12 @@ class AIChatTabWidget(QWidget):
             QFrame {{
                 background-color: {BG_CARD2};
                 border-top: 1px solid {BORDER};
-                border-radius: 0 0 12px 12px;
+                border-radius: 0 0 14px 14px;
             }}
         """)
         ih = QHBoxLayout(input_bar)
-        ih.setContentsMargins(12, 10, 12, 10)
-        ih.setSpacing(8)
+        ih.setContentsMargins(14, 10, 14, 10)
+        ih.setSpacing(10)
 
         self.input_field = QLineEdit()
         self.input_field.setPlaceholderText("Escribe tu mensaje o pregúntame algo...")
@@ -346,8 +349,8 @@ class AIChatTabWidget(QWidget):
             QLineEdit {{
                 background-color: {BG_CARD};
                 border: 1px solid {BORDER};
-                border-radius: 8px;
-                padding: 10px 14px;
+                border-radius: 10px;
+                padding: 11px 16px;
                 color: {TEXT_MAIN};
             }}
             QLineEdit:focus {{
@@ -358,17 +361,18 @@ class AIChatTabWidget(QWidget):
 
         self.btn_send = QPushButton("✈️")
         self.btn_send.setCursor(Qt.PointingHandCursor)
-        self.btn_send.setFixedSize(46, 40)
-        self.btn_send.setFont(QFont("Segoe UI Emoji", 13))
+        self.btn_send.setFixedSize(48, 42)
+        self.btn_send.setFont(QFont("Segoe UI Emoji", 14))
         self.btn_send.setStyleSheet(f"""
             QPushButton {{
                 background-color: {OLIVE};
                 color: {TEXT_MAIN};
                 border: 1px solid {OLIVE_MID};
-                border-radius: 8px;
+                border-radius: 10px;
             }}
             QPushButton:hover {{
                 background-color: {OLIVE_MID};
+                border-color: {OLIVE_LIGHT};
             }}
         """)
         self.btn_send.clicked.connect(self._handle_send)
@@ -393,22 +397,22 @@ class AIChatTabWidget(QWidget):
             "Se considera un clima confortable y templado para actividades cotidianas."
         )
 
-    # ──────────────────── BURBUJAS DE CHAT ────────────────────
+    # ──────────────────── BURBUJAS DE CHAT ESTILIZADAS ────────────────────
 
     def _ts(self):
         return datetime.datetime.now().strftime("%I:%M %p")
 
     def _add_user_bubble(self, text):
-        """Burbuja del usuario a la derecha estilo Oliva Oscuro."""
+        """Burbuja del usuario a la derecha estilo Verde Oliva Elegante (#3A4632)."""
         ts = self._ts()
         html = (
-            f'<table width="100%" cellpadding="0" cellspacing="0"><tr>'
-            f'<td width="25%"></td>'
+            f'<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;"><tr>'
+            f'<td width="20%"></td>'
             f'<td align="right">'
             f'<span style="background-color:{USER_BG}; color:{TEXT_MAIN}; '
-            f'padding:10px 16px; border-radius:12px; font-size:13px; border: 1px solid {BORDER_HIGHLIGHT};">'
+            f'padding:12px 18px; border-radius:14px; font-size:13px; border: 1px solid #4a5940; display:inline-block;">'
             f'{text}</span>'
-            f'<br/><span style="color:{TEXT_MUTED}; font-size:10px;">{ts} 👤</span>'
+            f'<br/><span style="color:{TEXT_SEC}; font-size:10px; margin-top:3px;">{ts}  👤</span>'
             f'</td></tr></table>'
         )
         self.chat_display.append(html)
@@ -416,16 +420,21 @@ class AIChatTabWidget(QWidget):
         self._scroll_bottom()
 
     def _add_ai_bubble(self, text):
-        """Burbuja de la IA a la izquierda estilo Gris-Verdoso con badge de hoja."""
+        """Burbuja de la IA a la izquierda estilo Gris-Verdoso (#242822) con badge de hoja."""
         ts = self._ts()
         html = (
-            f'<table width="100%" cellpadding="0" cellspacing="0"><tr>'
-            f'<td align="left">'
-            f'<span style="background-color:{CREAM}; color:#252a23; padding:5px 8px; border-radius:12px; font-size:14px;">🌿</span> '
+            f'<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;"><tr>'
+            f'<td align="left" valign="top">'
+            f'<table cellpadding="0" cellspacing="0"><tr>'
+            f'<td valign="top" style="padding-right:8px;">'
+            f'<span style="background-color:{OLIVE}; color:#ffffff; padding:6px 9px; border-radius:14px; font-size:13px;">🌿</span>'
+            f'</td>'
+            f'<td>'
             f'<span style="background-color:{AI_BG}; color:{TEXT_MAIN}; '
-            f'padding:12px 16px; border-radius:12px; font-size:13px; line-height:1.6; border: 1px solid {BORDER};">'
+            f'padding:12px 18px; border-radius:14px; font-size:13px; line-height:1.6; border: 1px solid {BORDER}; display:inline-block;">'
             f'{text}</span>'
-            f'<br/><span style="color:{TEXT_MUTED}; font-size:10px; margin-left:36px;">{ts}</span>'
+            f'<br/><span style="color:{TEXT_MUTED}; font-size:10px; margin-top:3px;">{ts}</span>'
+            f'</td></tr></table>'
             f'</td>'
             f'<td width="15%"></td>'
             f'</tr></table>'
@@ -455,11 +464,13 @@ class AIChatTabWidget(QWidget):
     def _reset_chat(self):
         self.ai_agent.clear_conversation_history()
         self.chat_display.clear()
+        self.avatar_face.set_expression(AIFaceWidget.STATE_NORMAL)
         self._add_ai_bubble("Conversación reiniciada. ¿En qué puedo ayudarte hoy?")
 
     def add_proactive_alert(self, text, expression_state="WARN"):
         """Publica una alerta proactiva en el chat."""
         self._add_ai_bubble(f"⚠️ <b>ALERTA:</b> {text}")
+        self.avatar_face.set_expression(expression_state)
 
     # ──────────────────── MOTOR DE IA ─────────────────────────
 
@@ -482,6 +493,7 @@ class AIChatTabWidget(QWidget):
 
     def _generate_response(self, query):
         t, h, nn1, nn2 = self._get_live_data()
+        self.avatar_face.set_expression(AIFaceWidget.STATE_THINKING)
         self.btn_send.setEnabled(False)
         self.input_field.setEnabled(False)
 
@@ -496,10 +508,15 @@ class AIChatTabWidget(QWidget):
         self.input_field.setFocus()
 
         text = res.get("response", "")
+        expr = res.get("expression_state", AIFaceWidget.STATE_HAPPY)
+
+        self.avatar_face.set_expression(AIFaceWidget.STATE_TALKING)
         self._add_ai_bubble(text)
+        QTimer.singleShot(1200, lambda: self.avatar_face.set_expression(expr))
 
     def _check_proactive(self):
         t, h, nn1, nn2 = self._get_live_data()
         alert = self.ai_agent.check_proactive_alerts(t, h, nn1, nn2)
         if alert:
             self._add_ai_bubble(alert["message"])
+            self.avatar_face.set_expression(alert.get("expression_state", AIFaceWidget.STATE_WARN))
