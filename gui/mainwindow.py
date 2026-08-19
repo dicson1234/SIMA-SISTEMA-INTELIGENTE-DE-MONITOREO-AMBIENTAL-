@@ -119,49 +119,48 @@ class MainWindow(QMainWindow):
         tb_layout.addWidget(logo)
         tb_layout.addSpacing(6)
 
-        # Estilos de botones pill
-        pill_primary = """
+        # Estilos de botones pill según imagen #3 (Beige y Oliva)
+        pill_olive = """
             QPushButton {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                    stop:0 #1a3524, stop:1 #142a1c);
-                color: #4ade80; border: 1px solid #2d5a3a;
-                border-radius: 7px; padding: 6px 13px;
+                background: #6f7e5d; color: #f2f0e8;
+                border: 1px solid #82936b;
+                border-radius: 12px; padding: 6px 14px;
                 font-weight: 600; font-size: 11px;
             }
             QPushButton:hover {
-                background: #2d5a3a; color: #a7f3d0; border-color: #4ade80;
+                background: #82936b; color: #ffffff; border-color: #a5b98a;
             }
-            QPushButton:pressed { background: #2d6b44; }
+            QPushButton:pressed { background: #5c6a4c; }
         """
-        pill_secondary = """
+        pill_beige = """
             QPushButton {
-                background: #111a14; color: #a7f3d0;
-                border: 1px solid #243b2a;
-                border-radius: 7px; padding: 6px 13px;
+                background: #d8d0be; color: #1e221c;
+                border: 1px solid #bfb7a5;
+                border-radius: 12px; padding: 6px 14px;
                 font-weight: 600; font-size: 11px;
             }
             QPushButton:hover {
-                background: #1a2a1f; color: #e8f5e9; border-color: #4ade80;
+                background: #e8e3d7; color: #141714; border-color: #6f7e5d;
             }
-            QPushButton:pressed { background: #243b2a; }
+            QPushButton:pressed { background: #bfb7a5; }
         """
 
         # Botones de control
         self.btn_connect = QPushButton("Conectar Serie")
-        self.btn_connect.setStyleSheet(pill_primary)
+        self.btn_connect.setStyleSheet(pill_olive)
         self.btn_connect.clicked.connect(self._toggle_connection)
 
         self.btn_demo = QPushButton("Modo Demo")
-        self.btn_demo.setStyleSheet(pill_primary)
+        self.btn_demo.setStyleSheet(pill_beige)
         self.btn_demo.clicked.connect(self._toggle_demo_mode)
 
         self.btn_pause = QPushButton("Pausar Tiempo")
-        self.btn_pause.setStyleSheet(pill_secondary)
+        self.btn_pause.setStyleSheet(pill_beige)
         self.btn_pause.clicked.connect(self._toggle_pause)
         self.btn_pause.setEnabled(True)
 
         self.btn_clear = QPushButton("Limpiar Datos")
-        self.btn_clear.setStyleSheet(pill_secondary)
+        self.btn_clear.setStyleSheet(pill_beige)
         self.btn_clear.clicked.connect(self._clear_data)
 
         # LED + Estado
@@ -170,33 +169,33 @@ class MainWindow(QMainWindow):
 
         self.label_serial_status = QLabel("● Desconectado")
         self.label_serial_status.setFont(QFont("Segoe UI", 9, QFont.Bold))
-        self.label_serial_status.setStyleSheet("color: #ef4444;")
+        self.label_serial_status.setStyleSheet("color: #c45c5c; background: #252a23; padding: 5px 12px; border-radius: 10px; border: 1px solid #3a4236;")
 
         # Exportación y herramientas
         self.btn_excel = QPushButton("Exportar Excel")
-        self.btn_excel.setStyleSheet(pill_secondary)
+        self.btn_excel.setStyleSheet(pill_beige)
         self.btn_excel.clicked.connect(self._export_excel)
 
         self.btn_pdf = QPushButton("Generar Reporte")
-        self.btn_pdf.setStyleSheet(pill_secondary)
+        self.btn_pdf.setStyleSheet(pill_beige)
         self.btn_pdf.clicked.connect(self._export_pdf)
 
-        self.btn_dev_nn = QPushButton("🧠 Red Neuronal")
-        self.btn_dev_nn.setStyleSheet(pill_primary)
+        self.btn_dev_nn = QPushButton("🌿 Red Neuronal")
+        self.btn_dev_nn.setStyleSheet(pill_beige)
         self.btn_dev_nn.clicked.connect(self._open_protected_dev_panel)
 
         self.btn_fullscreen = QPushButton("Restaurar Ventana")
-        self.btn_fullscreen.setStyleSheet(pill_secondary)
+        self.btn_fullscreen.setStyleSheet(pill_beige)
         self.btn_fullscreen.clicked.connect(self._toggle_fullscreen)
 
         self.btn_settings = QPushButton("⚙️ Ajustes")
-        self.btn_settings.setStyleSheet(pill_secondary)
+        self.btn_settings.setStyleSheet(pill_beige)
         self.btn_settings.clicked.connect(self._open_settings)
 
         # Perfil de usuario
         self.auth_mgr = get_auth_manager()
-        self.btn_user_profile = QPushButton("👤 Administrador")
-        self.btn_user_profile.setStyleSheet(pill_secondary)
+        self.btn_user_profile = QPushButton("👤 Administrador ∨")
+        self.btn_user_profile.setStyleSheet(pill_olive)
         self.btn_user_profile.clicked.connect(self._open_user_profile)
         self._update_user_badge()
 

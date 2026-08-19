@@ -1,14 +1,11 @@
 """
 SIMA — Sistema Inteligente de Monitoreo Ambiental
-Módulo de Gráficas en Tiempo Real — v3 Botanical Dark Luxury
+Módulo de Gráficas en Tiempo Real — v4 Olive Nature Elegance
 
-Gráficas pyqtgraph con estética forestal profunda:
-  - Fondo ultra-oscuro con trazos verde esmeralda
-  - Gradiente de relleno bajo la curva (botanical green)
-  - Efecto glow en la línea principal
-  - Línea de promedio dinámico (dashed)
-  - Indicadores de valor actual, mín/máx y promedio
-  - Ejes y grilla en tonos musgo sutil
+Gráficas pyqtgraph integradas con la paleta oliva / beige:
+  - Fondo #161916 discreto sin apariencia externa
+  - Trazos oliva natural (#82936b / #a5b98a)
+  - Indicadores de min/max/promedio en beige cálido
 
 Autor:  Equipo SIMA — Visualización Científica
 Fecha:  2026-08-18
@@ -24,13 +21,13 @@ from config import MAX_SAMPLES
 
 
 class RealTimeChartWidget(QFrame):
-    """Widget de graficación en tiempo real con estética Botanical Dark."""
+    """Widget de graficación en tiempo real con estética Olive Nature Elegance."""
 
     def __init__(
         self,
         title: str,
         unit: str,
-        color: str = "#4ade80",
+        color: str = "#82936b",
         max_samples: int = MAX_SAMPLES,
         parent: QWidget = None
     ) -> None:
@@ -60,7 +57,7 @@ class RealTimeChartWidget(QFrame):
 
         self.label_title = QLabel(self.title.upper() + " EN VIVO")
         self.label_title.setFont(QFont("Segoe UI", 9.5, QFont.Bold))
-        self.label_title.setStyleSheet("color: #7da88a; background: transparent; letter-spacing: 0.5px;")
+        self.label_title.setStyleSheet("color: #d8d0be; background: transparent; letter-spacing: 0.5px;")
 
         self.label_current = QLabel(f"--.- {self.unit}")
         self.label_current.setFont(QFont("Segoe UI", 14, QFont.Bold))
@@ -82,7 +79,7 @@ class RealTimeChartWidget(QFrame):
 
         for lbl in [self.lbl_min, self.lbl_max, self.lbl_avg]:
             lbl.setFont(QFont("Segoe UI", 8.5))
-            lbl.setStyleSheet("color: #4a6b55; background: transparent;")
+            lbl.setStyleSheet("color: #969890; background: transparent;")
             lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
         stats_bar.addStretch()
@@ -92,60 +89,59 @@ class RealTimeChartWidget(QFrame):
 
         # ── GRÁFICA pyqtgraph ──
         self.plot_widget = pg.PlotWidget()
-        self.plot_widget.setBackground('#080d0a')
+        self.plot_widget.setBackground('#161916')
         self.plot_widget.setMenuEnabled(False)
 
-        # Estilizar ejes con tonos musgo
+        # Estilizar ejes con tonos musgo/gris
         for axis_name in ['left', 'bottom']:
             axis = self.plot_widget.getAxis(axis_name)
-            axis.setPen(pg.mkPen(color='#1e3025', width=1))
-            axis.setTextPen(pg.mkPen(color='#4a6b55'))
-            axis.setStyle(tickLength=-5)
+            axis.setPen(pg.mkPen(color='#2e342b', width=1))
+            axis.setTextPen(pg.mkPen(color='#969890'))
+            axis.setStyle(tickLength=-4)
 
-        self.plot_widget.getAxis('bottom').setLabel('Muestras', color='#4a6b55')
-        self.plot_widget.getAxis('left').setLabel(self.unit, color='#4a6b55')
+        self.plot_widget.getAxis('bottom').setLabel('Muestras', color='#969890')
+        self.plot_widget.getAxis('left').setLabel(self.unit, color='#969890')
 
-        # Grilla ultra-sutil verde
-        self.plot_widget.showGrid(x=True, y=True, alpha=0.05)
+        self.plot_widget.showGrid(x=True, y=True, alpha=0.04)
         self.plot_widget.getViewBox().setMouseMode(pg.ViewBox.RectMode)
 
         c = QColor(self.color)
 
-        # 1. Relleno bajo la curva
+        # Relleno bajo la curva
         self.fill_curve = pg.PlotCurveItem(pen=pg.mkPen(None))
         self.zero_curve = pg.PlotCurveItem(pen=pg.mkPen(None))
-        fill_brush = QBrush(QColor(c.red(), c.green(), c.blue(), 25))
+        fill_brush = QBrush(QColor(c.red(), c.green(), c.blue(), 20))
         self.fill_area = pg.FillBetweenItem(
             self.fill_curve, self.zero_curve, brush=fill_brush
         )
         self.plot_widget.addItem(self.fill_area)
 
-        # 2. Glow (línea ancha semitransparente)
+        # Glow sutil
         glow_pen = pg.mkPen(
-            color=QColor(c.red(), c.green(), c.blue(), 35), width=10
+            color=QColor(c.red(), c.green(), c.blue(), 30), width=8
         )
         self.glow_curve = self.plot_widget.plot(pen=glow_pen)
 
-        # 3. Línea principal
-        main_pen = pg.mkPen(color=self.color, width=2.5)
+        # Línea principal
+        main_pen = pg.mkPen(color=self.color, width=2.2)
         self.curve = self.plot_widget.plot(pen=main_pen, name=self.title)
 
-        # 4. Punto del último valor
+        # Punto del último valor
         self.current_dot = pg.ScatterPlotItem(
-            size=10, pen=pg.mkPen('#080d0a', width=2),
+            size=9, pen=pg.mkPen('#161916', width=2),
             brush=pg.mkBrush(self.color)
         )
         self.plot_widget.addItem(self.current_dot)
 
-        # 5. Línea de promedio
+        # Línea de promedio
         self.avg_line = pg.InfiniteLine(
             angle=0,
-            pen=pg.mkPen(color='#a7f3d0', width=1.0, style=Qt.DashLine),
+            pen=pg.mkPen(color='#d8d0be', width=1.0, style=Qt.DashLine),
             label='Prom: --.-',
             labelOpts={
-                'color': '#a7f3d0',
+                'color': '#d8d0be',
                 'position': 0.92,
-                'fill': QColor(10, 15, 12, 180),
+                'fill': QColor(30, 34, 28, 180),
                 'movable': False
             }
         )

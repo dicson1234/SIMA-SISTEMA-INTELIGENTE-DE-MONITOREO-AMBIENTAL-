@@ -1,21 +1,10 @@
 """
-SIMA — Dashboard Principal · v3 Botanical Dark Luxury
+SIMA — Dashboard Principal · v4 Olive Nature Elegance
 
-Layout definitivo del panel de monitoreo:
-  ┌──────────────────────────────────────────────────────────┐
-  │  🌿 Monitoreo Ambiental                    ● MONITOREO  │
-  │  Visión en tiempo real del estado...        LISTO        │
-  ├──────────┬──────────┬──────────┬──────────┬──────────────┤
-  │ 🌡️ Temp  │ 💧 Hum   │ 🍃 Conft │  ◐ Temp  │   ◐ Hum     │
-  │ 24.0 °C  │ 50.0 %   │ 85 pts   │  Gauge   │   Gauge     │
-  │ ● Conft  │ ● Óptimo │ ● Bueno  │          │             │
-  ├──────────┴──────────┴──────────┴──────────┴──────────────┤
-  │ 🌫️ CALIDAD DEL AIRE   CO₂  PM2.5  PM10  VOCs  AQI      │
-  ├────────────────────────────────┬─────────────────────────┤
-  │ 📈 Tendencias en tiempo real   │ 📋 Historial de Muestras│
-  │  ● TEMPERATURA EN VIVO        │ 📜 Bitácora & Eventos   │
-  │  ● HUMEDAD EN VIVO            │                         │
-  └────────────────────────────────┴─────────────────────────┘
+Layout definitivo del panel de monitoreo según la 3ra imagen de referencia:
+  - Paleta Oliva / Beige / Tierra Elegante
+  - Tarjetas grandes, limpias y profesionales con espaciado amplio
+  - Medidores y gráficas en tonos oliva (#a5b98a / #82936b)
 
 Autor:  Equipo SIMA
 Fecha:  2026-08-18
@@ -34,20 +23,9 @@ from gui.gauges import GaugeWidget
 from gui.charts import RealTimeChartWidget
 from gui.widgets import MeasurementTableWidget
 
-# ─── Paleta Botanical Dark ───
-_BG       = "#0a0f0c"
-_CARD     = "#111a14"
-_CARD2    = "#162019"
-_BORDER   = "#243b2a"
-_GREEN    = "#4ade80"
-_GREEN_DIM = "#2d6b44"
-_TEXT     = "#e8f5e9"
-_TEXT_DIM = "#7da88a"
-_TEXT_MUTED = "#4a6b55"
-
 
 class DashboardWidget(QWidget):
-    """Dashboard principal de SIMA con estética Botanical Dark Luxury."""
+    """Dashboard principal de SIMA con estética Olive Nature Elegance."""
 
     def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
@@ -176,10 +154,10 @@ class DashboardWidget(QWidget):
         charts_v.addWidget(charts_header)
 
         self.chart_temp = RealTimeChartWidget(
-            title="Temperatura", unit="°C", color="#4ade80", parent=self
+            title="Temperatura", unit="°C", color="#a5b98a", parent=self
         )
         self.chart_hum = RealTimeChartWidget(
-            title="Humedad", unit="%", color="#34d399", parent=self
+            title="Humedad", unit="%", color="#82936b", parent=self
         )
         charts_v.addWidget(self.chart_temp, 1)
         charts_v.addWidget(self.chart_hum, 1)
@@ -237,13 +215,13 @@ class DashboardWidget(QWidget):
         main.addWidget(splitter, 1)
 
         self.log_message(
-            '<span style="color:#4ade80;">SIMA iniciado · monitoreo preparado.</span>'
+            '<span style="color:#a5b98a;">SIMA iniciado · monitoreo preparado.</span>'
         )
 
     def log_message(self, message: str) -> None:
         """Agrega un evento visual con timestamp."""
         now_str = datetime.now().strftime("%H:%M:%S")
-        log_line = f'<span style="color:#4ade80;">[{now_str}]</span> {message}'
+        log_line = f'<span style="color:#a5b98a;">[{now_str}]</span> {message}'
         self.log_console.append(log_line)
         sb = self.log_console.verticalScrollBar()
         sb.setValue(sb.maximum())
