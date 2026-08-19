@@ -182,19 +182,30 @@ class SIMAWebBridge(QObject):
 
         ai_agent = self.window.ai_chat_tab.ai_agent
 
-        # Desconectar el worker anterior si aún sigue corriendo para no congelar la GUI principal
-        if self._worker and self._worker.isRunning():
+        # Limpiar worker anterior de forma segura (sin deleteLater que destruye el objeto C++)
+        if self._worker is not None:
             try:
-                self._worker.response_ready.disconnect()
-            except Exception:
-                pass
+                still_running = self._worker.isRunning()
+            except RuntimeError:
+                still_running = False
+            if still_running:
+                try:
+                    self._worker.response_ready.disconnect()
+                except Exception:
+                    pass
+            self._worker = None
 
         # Crear e iniciar hilo asíncrono para no bloquear la interfaz GUI
         worker = AIWorkerThread(ai_agent, prompt, nn1, nn2, temp, hum, parent=self)
         worker.response_ready.connect(self._on_worker_response)
-        worker.finished.connect(worker.deleteLater)
+        worker.finished.connect(lambda: self._cleanup_worker(worker))
         self._worker = worker
         worker.start()
+
+    def _cleanup_worker(self, worker) -> None:
+        """Limpieza segura del worker sin destruir el objeto C++."""
+        if self._worker is worker:
+            self._worker = None
 
     def _on_worker_response(self, res_dict: dict) -> None:
         payload = json.dumps(res_dict, ensure_ascii=False)
